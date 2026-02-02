@@ -20,10 +20,10 @@ Users can visit daily to see today's demotivating quote beautifully displayed on
 - **Text readability:** White text in all cases; ensure sufficient contrast by selecting darker landscapes or applying darkening overlay to background images
 - **Additional page elements visible:**
   - Date indicator (shows which day's quote this is, e.g., "January 15, 2025")
-  - Share buttons (social sharing functionality)
   - "Built by Kristof.pro" credit with link
   - "Buy me a coffee" donation link
   - These elements should be positioned unobtrusively (footer/corners) to not compete with the quote
+  - Note: Share buttons deferred to Phase 2
 
 ### Typography & Aesthetic Style
 
