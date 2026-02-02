@@ -53,6 +53,18 @@ Users can:
 - **Cache stampede** — Stale-while-revalidate prevents midnight rollover stampede
 - **Font loading failures** — Use @vercel/og built-in fonts or proper bundling
 
+### Plans
+
+**Plans:** 6 plans in 3 waves
+
+Plans:
+- [ ] 01-01-PLAN.md — Initialize Next.js project with TypeScript and Tailwind
+- [ ] 01-02-PLAN.md — Create quote collection with deterministic selection
+- [ ] 01-03-PLAN.md — Integrate Unsplash API with caching and fallbacks
+- [ ] 01-04-PLAN.md — Build responsive homepage with quote display
+- [ ] 01-05-PLAN.md — Create OG image generation endpoint
+- [ ] 01-06-PLAN.md — Deploy to Vercel with production configuration
+
 ### Phase Complete When
 
 - [ ] Homepage displays today's quote with romantic background on all screen sizes
