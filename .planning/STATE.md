@@ -2,20 +2,20 @@
 
 **Last Updated:** 2026-02-02  
 **Current Phase:** Phase 1 (Core Foundation & Content Display)  
-**Status:** Plans 01-02 complete, Plan 03 ready
+**Status:** Plans 01-03 complete, Plan 04 ready
 
 ## Current State
 
 **Phase:** Phase 1 - Core Foundation & Content Display  
 **Stage:** Execution  
-**Progress:** 33% (2/6 plans complete)
+**Progress:** 50% (3/6 plans complete)
 
 ### Active Work
 
 - [x] Plan 01: Next.js project initialization — Complete
 - [x] Plan 02: Quote collection with deterministic selection — Complete
-- [ ] Plan 03: Unsplash API integration — Next
-- [ ] Plan 04: Responsive homepage — Pending
+- [x] Plan 03: Unsplash API integration — Complete
+- [ ] Plan 04: Responsive homepage — Next
 - [ ] Plan 05: OG image generation — Pending
 - [ ] Plan 06: Vercel deployment — Pending
 
@@ -25,6 +25,9 @@ None currently blocked.
 
 ### Recent Decisions
 
+- **2026-02-02:** Use 'use cache' directive for automatic Next.js 15+ caching (24 hours)
+- **2026-02-02:** Preserve ixid parameter by using API URLs directly (Pitfall #3 prevention)
+- **2026-02-02:** Implement automatic fallback to CC0 images on any Unsplash error
 - **2026-02-02:** Simple hash function for deterministic quote selection (no crypto needed)
 - **2026-02-02:** 30 quotes provides ~month of unique content before repeats
 - **2026-02-02:** UTC dates for global consistency across timezones
@@ -34,16 +37,16 @@ None currently blocked.
 ## Phase 1 Progress: Core Foundation & Content Display
 
 **Requirements:** 8/12 v1 requirements  
-**Status:** In progress (2/6 plans complete)
+**Status:** In progress (3/6 plans complete)
 
 ### Completion Criteria
 
 - [ ] Homepage displays today's quote with romantic background on all screen sizes
-- [ ] Same date shows same quote for all users (test with multiple devices/browsers)
+- [x] Same date shows same quote for all users (test with multiple devices/browsers)
 - [ ] OG image generation route produces <4MB JPEGs in <10s (including cold starts)
 - [ ] Site deployed to Vercel with production domain
 - [ ] Lighthouse mobile score >90 (Performance, Accessibility, Best Practices, SEO)
-- [ ] Unsplash production API application submitted (or demo mode working with fallbacks)
+- [x] Unsplash production API application submitted (or demo mode working with fallbacks)
 
 ### Requirements Status
 
@@ -56,7 +59,7 @@ None currently blocked.
 | CONTENT-01 | Complete | 30 curated demotivating quotes in src/lib/quotes.ts |
 | CONTENT-02 | Complete | Deterministic date-based hash selection implemented |
 | TECH-01 | Pending | Deploy to Vercel |
-| TECH-02 | In Progress | Domain whitelisted, API client installed |
+| TECH-02 | Complete | Unsplash API client with caching and fallbacks |
 
 ## Phase 2 Progress: Social Sharing & Virality
 
@@ -87,28 +90,36 @@ None currently blocked.
 
 ## Next Actions
 
-1. **Immediate:** Execute Plan 01-03 (Unsplash API integration)
-   - Set up Unsplash API client with caching
-   - Apply for Unsplash production API access
-   - Implement fallback images
+1. **Immediate:** Execute Plan 01-04 (Responsive homepage)
+   - Build responsive homepage with quote display
+   - Integrate Unsplash background images
+   - Implement elegant typography and layout
 
-2. **Soon:** Execute Plan 01-04 (Responsive homepage)
-   - Integrate quote and landscape display
-   - Implement responsive design
-   - Add footer elements
+2. **Soon:** Execute Plan 01-05 (OG image generation)
+   - Create OG image generation endpoint
+   - Implement Satori + Sharp for image generation
+   - Test performance and file size constraints
 
-3. **Later:** Plans 01-05 through 01-06 (OG images, deployment)
+3. **Later:** Plan 01-06 (Vercel deployment)
+   - Deploy to Vercel with production domain
+   - Configure environment variables
+   - Test live deployment
 
 ## Risk Watch
 
 | Risk | Severity | Mitigation | Status |
 |------|----------|------------|--------|
-| Unsplash API approval delay | MEDIUM | Apply immediately, implement fallback images, demo mode for testing | Monitor |
+| Unsplash API approval delay | MEDIUM | Fallback images implemented, demo mode working | Mitigated |
 | Cold start timeouts | HIGH | Use Satori + Sharp (not Puppeteer), aggressive caching | Phase 1 design |
 | Social media cache issues | MEDIUM | Test with scraper tools in Phase 2 before launch | Planned |
-| Rate limit exhaustion | HIGH | Multi-layer caching, production API access | Phase 1 design |
+| Rate limit exhaustion | HIGH | Multi-layer caching, production API access | Mitigated |
 
 ## Decision Log
+
+### 2026-02-02: Unsplash API Integration Strategy
+- **Decision:** Use 'use cache' directive for automatic caching, preserve ixid parameter, automatic fallback to CC0 images
+- **Rationale:** Prevents rate limit exhaustion (Pitfall #2), complies with Unsplash guidelines (Pitfall #3), ensures graceful degradation
+- **Impact:** Production-ready integration with multi-layer protection against API failures
 
 ### 2026-02-02: Quote Selection Algorithm
 - **Decision:** Use simple bitwise hash `((hash << 5) - hash) + charCode` for deterministic selection
@@ -153,4 +164,4 @@ None currently blocked.
 ---
 
 *State tracking initialized: 2025-01-15*  
-*Last updated: 2026-02-02 after Plan 02 completion*
+*Last updated: 2026-02-02 after Plan 03 completion*
