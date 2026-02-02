@@ -59,20 +59,20 @@ Users can:
 
 Plans:
 - [x] 01-01-PLAN.md — Initialize Next.js project with TypeScript and Tailwind (Complete: 2026-02-02)
-- [ ] 01-02-PLAN.md — Create quote collection with deterministic selection
-- [ ] 01-03-PLAN.md — Integrate Unsplash API with caching and fallbacks
-- [ ] 01-04-PLAN.md — Build responsive homepage with quote display
+- [x] 01-02-PLAN.md — Create quote collection with deterministic selection (Complete: 2026-02-02)
+- [x] 01-03-PLAN.md — Integrate Unsplash API with caching and fallbacks (Complete: 2026-02-02)
+- [x] 01-04-PLAN.md — Build responsive homepage with quote display (Complete: 2026-02-02)
 - [ ] 01-05-PLAN.md — Create OG image generation endpoint
 - [ ] 01-06-PLAN.md — Deploy to Vercel with production configuration
 
 ### Phase Complete When
 
-- [ ] Homepage displays today's quote with romantic background on all screen sizes
-- [ ] Same date shows same quote for all users (test with multiple devices/browsers)
+- [x] Homepage displays today's quote with romantic background on all screen sizes
+- [x] Same date shows same quote for all users (test with multiple devices/browsers)
 - [ ] OG image generation route produces <4MB JPEGs in <10s (including cold starts)
 - [ ] Site deployed to Vercel with production domain
 - [ ] Lighthouse mobile score >90 (Performance, Accessibility, Best Practices, SEO)
-- [ ] Unsplash production API application submitted (or demo mode working with fallbacks)
+- [x] Unsplash production API application submitted (or demo mode working with fallbacks)
 
 ---
 

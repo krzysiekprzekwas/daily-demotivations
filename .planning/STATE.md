@@ -2,21 +2,21 @@
 
 **Last Updated:** 2026-02-02  
 **Current Phase:** Phase 1 (Core Foundation & Content Display)  
-**Status:** Plans 01-03 complete, Plan 04 ready
+**Status:** Plans 01-04 complete, Plan 05 ready
 
 ## Current State
 
 **Phase:** Phase 1 - Core Foundation & Content Display  
 **Stage:** Execution  
-**Progress:** 50% (3/6 plans complete)
+**Progress:** 67% (4/6 plans complete)
 
 ### Active Work
 
 - [x] Plan 01: Next.js project initialization — Complete
 - [x] Plan 02: Quote collection with deterministic selection — Complete
 - [x] Plan 03: Unsplash API integration — Complete
-- [ ] Plan 04: Responsive homepage — Next
-- [ ] Plan 05: OG image generation — Pending
+- [x] Plan 04: Responsive homepage — Complete
+- [ ] Plan 05: OG image generation — Next
 - [ ] Plan 06: Vercel deployment — Pending
 
 ### Blocked Items
@@ -25,6 +25,10 @@ None currently blocked.
 
 ### Recent Decisions
 
+- **2026-02-02:** ISR revalidate: 86400 (24-hour cache) prevents midnight stampede
+- **2026-02-02:** 40% black overlay provides optimal contrast for white text on landscapes
+- **2026-02-02:** Responsive typography scales from 3xl (mobile) to 6xl (desktop)
+- **2026-02-02:** Components moved to src/components/ to align with tsconfig paths
 - **2026-02-02:** Use 'use cache' directive for automatic Next.js 15+ caching (24 hours)
 - **2026-02-02:** Preserve ixid parameter by using API URLs directly (Pitfall #3 prevention)
 - **2026-02-02:** Implement automatic fallback to CC0 images on any Unsplash error
@@ -41,7 +45,7 @@ None currently blocked.
 
 ### Completion Criteria
 
-- [ ] Homepage displays today's quote with romantic background on all screen sizes
+- [x] Homepage displays today's quote with romantic background on all screen sizes
 - [x] Same date shows same quote for all users (test with multiple devices/browsers)
 - [ ] OG image generation route produces <4MB JPEGs in <10s (including cold starts)
 - [ ] Site deployed to Vercel with production domain
@@ -52,10 +56,10 @@ None currently blocked.
 
 | Requirement | Status | Notes |
 |-------------|--------|-------|
-| CORE-01 | In Progress | getTodaysQuote() implemented, needs homepage integration |
-| CORE-02 | Pending | Responsive design for all devices |
-| CORE-03 | In Progress | Font configured (Playfair Display), needs implementation |
-| CORE-04 | Pending | Quote overlaid on romantic landscape |
+| CORE-01 | Complete | getTodaysQuote() implemented and integrated in homepage |
+| CORE-02 | Complete | Responsive design from 320px to 1920px+ without scrolling |
+| CORE-03 | Complete | Playfair Display serif font with responsive sizing |
+| CORE-04 | Complete | Quote overlaid on romantic landscape with 40% darkening |
 | CONTENT-01 | Complete | 30 curated demotivating quotes in src/lib/quotes.ts |
 | CONTENT-02 | Complete | Deterministic date-based hash selection implemented |
 | TECH-01 | Pending | Deploy to Vercel |
@@ -90,20 +94,20 @@ None currently blocked.
 
 ## Next Actions
 
-1. **Immediate:** Execute Plan 01-04 (Responsive homepage)
-   - Build responsive homepage with quote display
-   - Integrate Unsplash background images
-   - Implement elegant typography and layout
-
-2. **Soon:** Execute Plan 01-05 (OG image generation)
+1. **Immediate:** Execute Plan 01-05 (OG image generation)
    - Create OG image generation endpoint
    - Implement Satori + Sharp for image generation
    - Test performance and file size constraints
 
-3. **Later:** Plan 01-06 (Vercel deployment)
+2. **Soon:** Execute Plan 01-06 (Vercel deployment)
    - Deploy to Vercel with production domain
    - Configure environment variables
    - Test live deployment
+
+3. **Later:** Begin Phase 2 (Social Sharing & Virality)
+   - Web Share API implementation
+   - Share button components
+   - Social platform validation
 
 ## Risk Watch
 
@@ -115,6 +119,16 @@ None currently blocked.
 | Rate limit exhaustion | HIGH | Multi-layer caching, production API access | Mitigated |
 
 ## Decision Log
+
+### 2026-02-02: Homepage Responsive Design
+- **Decision:** Use responsive text scaling (3xl → 6xl), 40% darkening overlay, ISR with 24-hour revalidation
+- **Rationale:** Ensures readability across all device sizes, sufficient contrast for white text, prevents midnight cache stampede
+- **Impact:** Complete homepage implementation satisfying CORE-01 through CORE-04 requirements
+
+### 2026-02-02: Component Organization
+- **Decision:** Move components from root /components to src/components/
+- **Rationale:** Aligns with tsconfig path mapping (@/* → ./src/*), simplifies imports
+- **Impact:** Cleaner module resolution, consistent project structure
 
 ### 2026-02-02: Unsplash API Integration Strategy
 - **Decision:** Use 'use cache' directive for automatic caching, preserve ixid parameter, automatic fallback to CC0 images
