@@ -1,19 +1,23 @@
 # Project State: Daily Demotivations
 
-**Last Updated:** 2025-01-15  
+**Last Updated:** 2026-02-02  
 **Current Phase:** Phase 1 (Core Foundation & Content Display)  
-**Status:** Ready to begin planning
+**Status:** Plan 01 complete, Plan 02 ready
 
 ## Current State
 
 **Phase:** Phase 1 - Core Foundation & Content Display  
-**Stage:** Pre-planning  
-**Progress:** 0% (0/6 completion criteria met)
+**Stage:** Execution  
+**Progress:** 17% (1/6 plans complete)
 
 ### Active Work
 
-- [ ] No active plans yet — roadmap just created
-- [ ] Awaiting Phase 1 planning to begin
+- [x] Plan 01: Next.js project initialization — Complete
+- [ ] Plan 02: Quote collection with deterministic selection — Next
+- [ ] Plan 03: Unsplash API integration — Pending
+- [ ] Plan 04: Responsive homepage — Pending
+- [ ] Plan 05: OG image generation — Pending
+- [ ] Plan 06: Vercel deployment — Pending
 
 ### Blocked Items
 
@@ -21,6 +25,8 @@ None currently blocked.
 
 ### Recent Decisions
 
+- **2026-02-02:** Used Tailwind CSS v3 (not v4) for stable PostCSS integration
+- **2026-02-02:** Selected Playfair Display as serif font for elegant quote typography
 - **2025-01-15:** Roadmap created with 3-phase structure
 - **2025-01-15:** All 12 v1 requirements mapped to phases (8 to Phase 1, 4 to Phase 2, 0 to Phase 3)
 - **2025-01-15:** Phase 1 prioritizes preventing critical serverless pitfalls (cold starts, rate limits, payload size)
@@ -28,7 +34,7 @@ None currently blocked.
 ## Phase 1 Progress: Core Foundation & Content Display
 
 **Requirements:** 8/12 v1 requirements  
-**Status:** Not started
+**Status:** In progress (1/6 plans complete)
 
 ### Completion Criteria
 
@@ -45,12 +51,12 @@ None currently blocked.
 |-------------|--------|-------|
 | CORE-01 | Pending | Display today's quote deterministically |
 | CORE-02 | Pending | Responsive design for all devices |
-| CORE-03 | Pending | Clean typography mimicking inspirational sites |
+| CORE-03 | In Progress | Font configured (Playfair Display), needs implementation |
 | CORE-04 | Pending | Quote overlaid on romantic landscape |
 | CONTENT-01 | Pending | Curated quote collection in code |
 | CONTENT-02 | Pending | Deterministic date-based mapping |
 | TECH-01 | Pending | Deploy to Vercel |
-| TECH-02 | Pending | Unsplash API integration |
+| TECH-02 | In Progress | Domain whitelisted, API client installed |
 
 ## Phase 2 Progress: Social Sharing & Virality
 
@@ -81,17 +87,17 @@ None currently blocked.
 
 ## Next Actions
 
-1. **Immediate:** Begin Phase 1 planning
-   - Break Phase 1 into implementable plans
-   - Identify technical decisions needed (font selection, quote storage format, caching headers)
-   - Set up development environment
+1. **Immediate:** Execute Plan 01-02 (Quote collection with deterministic selection)
+   - Create curated demotivating quotes collection
+   - Implement date-based deterministic selection logic
+   - Add TypeScript types for quotes
 
-2. **Soon:** Apply for Unsplash production API access
-   - Critical for Phase 1 completion
-   - Timeline uncertain (1-4 weeks)
-   - Demo mode works for testing but needs production for launch
+2. **Soon:** Execute Plan 01-03 (Unsplash API integration)
+   - Set up Unsplash API client with caching
+   - Apply for Unsplash production API access
+   - Implement fallback images
 
-3. **Later:** Phase 2 planning begins after Phase 1 completion criteria met
+3. **Later:** Plans 01-04 through 01-06 (Homepage, OG images, deployment)
 
 ## Risk Watch
 
@@ -103,6 +109,16 @@ None currently blocked.
 | Rate limit exhaustion | HIGH | Multi-layer caching, production API access | Phase 1 design |
 
 ## Decision Log
+
+### 2026-02-02: Tailwind CSS Version Selection
+- **Decision:** Use Tailwind CSS v3.4.19 instead of v4.x
+- **Rationale:** V4 requires new @tailwindcss/postcss plugin with breaking changes; V3 is stable and production-ready
+- **Impact:** Smooth PostCSS integration with Next.js, no migration needed
+
+### 2026-02-02: Serif Font Selection
+- **Decision:** Use Playfair Display (weights 400, 700) via next/font/google
+- **Rationale:** Elegant, readable serif that provides sophisticated contrast with demotivating content
+- **Impact:** Establishes typography pattern for all quote displays
 
 ### 2025-01-15: Roadmap Structure
 - **Decision:** Use 3-phase structure (quick depth) instead of 4-5 phases
@@ -122,4 +138,4 @@ None currently blocked.
 ---
 
 *State tracking initialized: 2025-01-15*  
-*Next update: After Phase 1 planning begins*
+*Last updated: 2026-02-02 after Plan 01 completion*
