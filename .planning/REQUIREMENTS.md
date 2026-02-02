@@ -1,0 +1,107 @@
+# Requirements: Daily Demotivations
+
+**Defined:** 2025-01-15
+**Core Value:** Users get a daily laugh from the juxtaposition of demotivating content presented in the earnest, polished aesthetic of inspirational quote sites.
+
+## v1 Requirements
+
+Requirements for initial release. Each maps to roadmap phases.
+
+### Core Content Display
+
+- [ ] **CORE-01**: User visits site and sees today's demotivating quote (deterministic - same for everyone on a given day)
+- [ ] **CORE-02**: Site is fully responsive and works well on mobile devices
+- [ ] **CORE-03**: Quote is displayed with clean, sophisticated typography mimicking daily affirmations aesthetic
+- [ ] **CORE-04**: Quote is overlaid on a romantic landscape background image
+
+### Social Sharing
+
+- [ ] **SHARE-01**: User can download the quote+image as a single image file (PNG/JPEG)
+- [ ] **SHARE-02**: User can share via native mobile share menu (Web Share API)
+- [ ] **SHARE-03**: Shared links display proper Open Graph preview images on social platforms
+- [ ] **SHARE-04**: User can share directly to Facebook, LinkedIn, and Instagram via share buttons
+
+### Content Management
+
+- [ ] **CONTENT-01**: System has a curated collection of demotivating quotes stored in code
+- [ ] **CONTENT-02**: System uses deterministic date-based mapping to select today's quote (same quote for everyone on same day)
+
+### Technical Foundation
+
+- [ ] **TECH-01**: Site is deployed to Vercel platform
+- [ ] **TECH-02**: Site integrates with Unsplash API to fetch romantic landscape backgrounds
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Content Management
+
+- **CONTENT-03**: Admin CMS interface for managing quotes without code deployments
+- **CONTENT-04**: User submission system for community-contributed quotes
+- **CONTENT-05**: Moderation queue for reviewing submitted quotes before publication
+
+### Discovery & Navigation
+
+- **NAV-01**: Historical calendar view to browse past quotes
+- **NAV-02**: Previous/next navigation to see adjacent days' quotes
+- **NAV-03**: Permalink to specific dates (e.g., /quote/2025-01-15)
+
+### Social Optimization
+
+- **SHARE-05**: Platform-specific image formats (LinkedIn 1200x627, IG Story 1080x1920, FB 1080x1080)
+- **SHARE-06**: Social media analytics tracking (which quotes are most shared)
+
+### Performance
+
+- **PERF-01**: Edge caching with 24-hour TTL for optimal performance
+- **PERF-02**: Cache warming strategy to prevent midnight stampede
+
+### User Engagement
+
+- **USER-01**: Optional user accounts to save favorite quotes
+- **USER-02**: Daily visit streak tracking
+- **USER-03**: Email/notification opt-in for daily quote reminders
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| User authentication (v1) | Adds complexity, creates barrier to entry, conflicts with viral anonymous sharing |
+| Comments/discussions | Not a community platform; simplicity is the differentiator |
+| Categories/tags | Anti-feature per research; reduces focus on daily single quote |
+| Quote customization | Defeats the shared daily experience; everyone should see the same quote |
+| Video content | High complexity, storage costs; not aligned with core value |
+| Real-time features | Unnecessary for daily update cadence |
+| Native mobile apps | Web-first; mobile web sufficient for v1 |
+| Multiple languages | English-only for v1 to validate concept |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| CORE-01 | TBD | Pending |
+| CORE-02 | TBD | Pending |
+| CORE-03 | TBD | Pending |
+| CORE-04 | TBD | Pending |
+| SHARE-01 | TBD | Pending |
+| SHARE-02 | TBD | Pending |
+| SHARE-03 | TBD | Pending |
+| SHARE-04 | TBD | Pending |
+| CONTENT-01 | TBD | Pending |
+| CONTENT-02 | TBD | Pending |
+| TECH-01 | TBD | Pending |
+| TECH-02 | TBD | Pending |
+
+**Coverage:**
+- v1 requirements: 12 total
+- Mapped to phases: 0 (awaiting roadmap)
+- Unmapped: 12 ⚠️
+
+---
+*Requirements defined: 2025-01-15*
+*Last updated: 2025-01-15 after initial definition*
