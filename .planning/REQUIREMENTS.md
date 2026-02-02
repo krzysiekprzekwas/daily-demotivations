@@ -84,24 +84,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | TBD | Pending |
-| CORE-02 | TBD | Pending |
-| CORE-03 | TBD | Pending |
-| CORE-04 | TBD | Pending |
-| SHARE-01 | TBD | Pending |
-| SHARE-02 | TBD | Pending |
-| SHARE-03 | TBD | Pending |
-| SHARE-04 | TBD | Pending |
-| CONTENT-01 | TBD | Pending |
-| CONTENT-02 | TBD | Pending |
-| TECH-01 | TBD | Pending |
-| TECH-02 | TBD | Pending |
+| CORE-01 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Pending |
+| CORE-04 | Phase 1 | Pending |
+| SHARE-01 | Phase 2 | Pending |
+| SHARE-02 | Phase 2 | Pending |
+| SHARE-03 | Phase 2 | Pending |
+| SHARE-04 | Phase 2 | Pending |
+| CONTENT-01 | Phase 1 | Pending |
+| CONTENT-02 | Phase 1 | Pending |
+| TECH-01 | Phase 1 | Pending |
+| TECH-02 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 12 total
-- Mapped to phases: 0 (awaiting roadmap)
-- Unmapped: 12 ⚠️
+- Mapped to phases: 12 (100% coverage) ✅
+- Phase 1: 8 requirements (CORE-01 through CORE-04, CONTENT-01 through CONTENT-02, TECH-01 through TECH-02)
+- Phase 2: 4 requirements (SHARE-01 through SHARE-04)
+- Phase 3: 0 requirements (iterative polish only)
 
 ---
 *Requirements defined: 2025-01-15*
-*Last updated: 2025-01-15 after initial definition*
+*Last updated: 2025-01-15 after roadmap creation*
