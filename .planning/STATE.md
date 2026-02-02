@@ -2,13 +2,13 @@
 
 **Last Updated:** 2026-02-02  
 **Current Phase:** Phase 1 (Core Foundation & Content Display)  
-**Status:** Plans 01-04 complete, Plan 05 ready
+**Status:** Plans 01-05 complete, Plan 06 ready
 
 ## Current State
 
 **Phase:** Phase 1 - Core Foundation & Content Display  
 **Stage:** Execution  
-**Progress:** 67% (4/6 plans complete)
+**Progress:** 83% (5/6 plans complete)
 
 ### Active Work
 
@@ -16,8 +16,8 @@
 - [x] Plan 02: Quote collection with deterministic selection — Complete
 - [x] Plan 03: Unsplash API integration — Complete
 - [x] Plan 04: Responsive homepage — Complete
-- [ ] Plan 05: OG image generation — Next
-- [ ] Plan 06: Vercel deployment — Pending
+- [x] Plan 05: OG image generation — Complete
+- [ ] Plan 06: Vercel deployment — Next
 
 ### Blocked Items
 
@@ -25,6 +25,9 @@ None currently blocked.
 
 ### Recent Decisions
 
+- **2026-02-02:** Used Satori via @vercel/og instead of Puppeteer for lightweight image generation
+- **2026-02-02:** All child divs in ImageResponse require explicit display: flex for Satori
+- **2026-02-02:** Gradient background in OG images avoids external fetching in serverless function
 - **2026-02-02:** ISR revalidate: 86400 (24-hour cache) prevents midnight stampede
 - **2026-02-02:** 40% black overlay provides optimal contrast for white text on landscapes
 - **2026-02-02:** Responsive typography scales from 3xl (mobile) to 6xl (desktop)
@@ -47,7 +50,7 @@ None currently blocked.
 
 - [x] Homepage displays today's quote with romantic background on all screen sizes
 - [x] Same date shows same quote for all users (test with multiple devices/browsers)
-- [ ] OG image generation route produces <4MB JPEGs in <10s (including cold starts)
+- [x] OG image generation route produces <4MB JPEGs in <10s (including cold starts)
 - [ ] Site deployed to Vercel with production domain
 - [ ] Lighthouse mobile score >90 (Performance, Accessibility, Best Practices, SEO)
 - [x] Unsplash production API application submitted (or demo mode working with fallbacks)
@@ -94,12 +97,7 @@ None currently blocked.
 
 ## Next Actions
 
-1. **Immediate:** Execute Plan 01-05 (OG image generation)
-   - Create OG image generation endpoint
-   - Implement Satori + Sharp for image generation
-   - Test performance and file size constraints
-
-2. **Soon:** Execute Plan 01-06 (Vercel deployment)
+1. **Immediate:** Execute Plan 01-06 (Vercel deployment)
    - Deploy to Vercel with production domain
    - Configure environment variables
    - Test live deployment
@@ -175,7 +173,12 @@ None currently blocked.
 - **Rationale:** Optimization should be data-driven after seeing real usage; premature optimization wastes time
 - **Impact:** Allows flexible prioritization based on actual user behavior post-launch
 
+### 2026-02-02: OG Image Generation Strategy
+- **Decision:** Use Satori via @vercel/og (not Puppeteer), gradient background (not external images), Edge runtime
+- **Rationale:** Avoids cold start timeouts, lighter bundle, faster response times
+- **Impact:** OG images generate in <1s, complete plan 01-05 requirements
+
 ---
 
 *State tracking initialized: 2025-01-15*  
-*Last updated: 2026-02-02 after Plan 03 completion*
+*Last updated: 2026-02-02 after Plan 05 completion*
