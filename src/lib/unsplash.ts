@@ -9,12 +9,10 @@ const unsplash = createApi({
 
 /**
  * Fetches a random romantic landscape from Unsplash
- * Uses 'use cache' directive for 24-hour caching (Next.js 15+)
+ * Cached via page-level ISR (revalidate = 86400) in page.tsx
  * Falls back to local images if API fails or rate limited
  */
 export async function getRandomLandscape(): Promise<LandscapePhoto> {
-  'use cache';
-  
   // If no API key, use fallback immediately
   if (!process.env.UNSPLASH_ACCESS_KEY) {
     console.warn('UNSPLASH_ACCESS_KEY not set, using fallback image');
