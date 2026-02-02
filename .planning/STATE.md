@@ -2,19 +2,19 @@
 
 **Last Updated:** 2026-02-02  
 **Current Phase:** Phase 1 (Core Foundation & Content Display)  
-**Status:** Plan 01 complete, Plan 02 ready
+**Status:** Plans 01-02 complete, Plan 03 ready
 
 ## Current State
 
 **Phase:** Phase 1 - Core Foundation & Content Display  
 **Stage:** Execution  
-**Progress:** 17% (1/6 plans complete)
+**Progress:** 33% (2/6 plans complete)
 
 ### Active Work
 
 - [x] Plan 01: Next.js project initialization — Complete
-- [ ] Plan 02: Quote collection with deterministic selection — Next
-- [ ] Plan 03: Unsplash API integration — Pending
+- [x] Plan 02: Quote collection with deterministic selection — Complete
+- [ ] Plan 03: Unsplash API integration — Next
 - [ ] Plan 04: Responsive homepage — Pending
 - [ ] Plan 05: OG image generation — Pending
 - [ ] Plan 06: Vercel deployment — Pending
@@ -25,16 +25,16 @@ None currently blocked.
 
 ### Recent Decisions
 
+- **2026-02-02:** Simple hash function for deterministic quote selection (no crypto needed)
+- **2026-02-02:** 30 quotes provides ~month of unique content before repeats
+- **2026-02-02:** UTC dates for global consistency across timezones
 - **2026-02-02:** Used Tailwind CSS v3 (not v4) for stable PostCSS integration
 - **2026-02-02:** Selected Playfair Display as serif font for elegant quote typography
-- **2025-01-15:** Roadmap created with 3-phase structure
-- **2025-01-15:** All 12 v1 requirements mapped to phases (8 to Phase 1, 4 to Phase 2, 0 to Phase 3)
-- **2025-01-15:** Phase 1 prioritizes preventing critical serverless pitfalls (cold starts, rate limits, payload size)
 
 ## Phase 1 Progress: Core Foundation & Content Display
 
 **Requirements:** 8/12 v1 requirements  
-**Status:** In progress (1/6 plans complete)
+**Status:** In progress (2/6 plans complete)
 
 ### Completion Criteria
 
@@ -49,12 +49,12 @@ None currently blocked.
 
 | Requirement | Status | Notes |
 |-------------|--------|-------|
-| CORE-01 | Pending | Display today's quote deterministically |
+| CORE-01 | In Progress | getTodaysQuote() implemented, needs homepage integration |
 | CORE-02 | Pending | Responsive design for all devices |
 | CORE-03 | In Progress | Font configured (Playfair Display), needs implementation |
 | CORE-04 | Pending | Quote overlaid on romantic landscape |
-| CONTENT-01 | Pending | Curated quote collection in code |
-| CONTENT-02 | Pending | Deterministic date-based mapping |
+| CONTENT-01 | Complete | 30 curated demotivating quotes in src/lib/quotes.ts |
+| CONTENT-02 | Complete | Deterministic date-based hash selection implemented |
 | TECH-01 | Pending | Deploy to Vercel |
 | TECH-02 | In Progress | Domain whitelisted, API client installed |
 
@@ -87,17 +87,17 @@ None currently blocked.
 
 ## Next Actions
 
-1. **Immediate:** Execute Plan 01-02 (Quote collection with deterministic selection)
-   - Create curated demotivating quotes collection
-   - Implement date-based deterministic selection logic
-   - Add TypeScript types for quotes
-
-2. **Soon:** Execute Plan 01-03 (Unsplash API integration)
+1. **Immediate:** Execute Plan 01-03 (Unsplash API integration)
    - Set up Unsplash API client with caching
    - Apply for Unsplash production API access
    - Implement fallback images
 
-3. **Later:** Plans 01-04 through 01-06 (Homepage, OG images, deployment)
+2. **Soon:** Execute Plan 01-04 (Responsive homepage)
+   - Integrate quote and landscape display
+   - Implement responsive design
+   - Add footer elements
+
+3. **Later:** Plans 01-05 through 01-06 (OG images, deployment)
 
 ## Risk Watch
 
@@ -109,6 +109,21 @@ None currently blocked.
 | Rate limit exhaustion | HIGH | Multi-layer caching, production API access | Phase 1 design |
 
 ## Decision Log
+
+### 2026-02-02: Quote Selection Algorithm
+- **Decision:** Use simple bitwise hash `((hash << 5) - hash) + charCode` for deterministic selection
+- **Rationale:** Deterministic and fast, no security requirements for quote selection
+- **Impact:** Same quote guaranteed for all users on same UTC date globally
+
+### 2026-02-02: Quote Collection Size
+- **Decision:** Start with 30 curated quotes
+- **Rationale:** Provides approximately one month of unique content before repeats, balancing variety with curation effort
+- **Impact:** Manageable for v1, expandable based on user feedback
+
+### 2026-02-02: UTC Date Consistency
+- **Decision:** Use UTC dates for quote selection via date-fns format
+- **Rationale:** Ensures all users globally see same quote on same calendar day regardless of timezone
+- **Impact:** Shared social experience critical for virality
 
 ### 2026-02-02: Tailwind CSS Version Selection
 - **Decision:** Use Tailwind CSS v3.4.19 instead of v4.x
@@ -138,4 +153,4 @@ None currently blocked.
 ---
 
 *State tracking initialized: 2025-01-15*  
-*Last updated: 2026-02-02 after Plan 01 completion*
+*Last updated: 2026-02-02 after Plan 02 completion*
