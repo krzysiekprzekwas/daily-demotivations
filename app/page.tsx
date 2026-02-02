@@ -2,10 +2,39 @@ import { getTodaysQuote } from '@/lib/quotes';
 import { getRandomLandscape, triggerDownload } from '@/lib/unsplash';
 import QuoteDisplay from '@/components/QuoteDisplay';
 import Footer from '@/components/Footer';
+import type { Metadata } from 'next';
 
 // ISR: Regenerate page every 24 hours (86400 seconds)
 // This prevents midnight cache stampede via stale-while-revalidate
 export const revalidate = 86400;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const quote = getTodaysQuote();
+  
+  return {
+    title: 'Daily Demotivations',
+    description: quote,
+    openGraph: {
+      title: 'Daily Demotivations',
+      description: quote,
+      images: [
+        {
+          url: '/api/og',
+          width: 1200,
+          height: 630,
+          alt: quote,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Daily Demotivations',
+      description: quote,
+      images: ['/api/og'],
+    },
+  };
+}
 
 export default async function HomePage() {
   const quote = getTodaysQuote();

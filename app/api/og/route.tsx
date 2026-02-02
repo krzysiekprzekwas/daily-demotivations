@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getTodaysQuote } from '../../../src/lib/quotes';
+import { getTodaysQuote } from '@/lib/quotes';
 import { format } from 'date-fns';
 
 export const runtime = 'edge';
@@ -22,11 +22,13 @@ export async function GET() {
             backgroundColor: '#1a1a1a',
             backgroundImage: 'linear-gradient(135deg, #2d1b2e 0%, #1a1a2e 50%, #16213e 100%)',
             padding: '80px',
+            position: 'relative',
           }}
         >
           {/* Date indicator */}
           <div
             style={{
+              display: 'flex',
               fontSize: 28,
               color: 'rgba(255, 255, 255, 0.6)',
               textTransform: 'uppercase',
@@ -41,6 +43,7 @@ export async function GET() {
           {/* Quote text with serif style */}
           <div
             style={{
+              display: 'flex',
               fontSize: 64,
               fontWeight: 400,
               color: 'white',
@@ -56,6 +59,7 @@ export async function GET() {
           {/* Attribution */}
           <div
             style={{
+              display: 'flex',
               position: 'absolute',
               bottom: 40,
               fontSize: 24,
