@@ -2,17 +2,10 @@
 
 import { useState } from 'react';
 import { FiShare2, FiDownload } from 'react-icons/fi';
-import { FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import ShareModal from './ShareModal';
 import ShareAction from './ShareAction';
 import Toast from './Toast';
-import { 
-  downloadImage, 
-  shareToInstagram, 
-  shareToWhatsApp, 
-  shareToLinkedIn,
-  getCurrentUrl 
-} from '@/lib/share-utils';
+import { downloadImage, shareImage } from '@/lib/share-utils';
 
 interface ShareButtonProps {
   quote: string;
@@ -23,6 +16,7 @@ export default function ShareButton({ quote }: ShareButtonProps) {
   const [toastMessage, setToastMessage] = useState('');
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -44,27 +38,20 @@ export default function ShareButton({ quote }: ShareButtonProps) {
     );
   };
 
-  const handleInstagram = () => {
-    shareToInstagram(() => {
-      showToast('Opening Instagram...');
-      setIsModalOpen(false);
-    });
-  };
-
-  const handleWhatsApp = () => {
-    const url = getCurrentUrl();
-    shareToWhatsApp(quote, url, () => {
-      showToast('Opening WhatsApp...');
-      setIsModalOpen(false);
-    });
-  };
-
-  const handleLinkedIn = () => {
-    const url = getCurrentUrl();
-    shareToLinkedIn(url, () => {
-      showToast('Opening LinkedIn...');
-      setIsModalOpen(false);
-    });
+  const handleShare = async () => {
+    setIsSharing(true);
+    await shareImage(
+      quote,
+      () => {
+        showToast('Shared successfully!');
+        setIsSharing(false);
+        setIsModalOpen(false);
+      },
+      (error) => {
+        showToast(error);
+        setIsSharing(false);
+      }
+    );
   };
 
   return (
@@ -93,7 +80,7 @@ export default function ShareButton({ quote }: ShareButtonProps) {
       <ShareModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="space-y-4">
           <p className="text-white/60 text-sm text-center">
-            Share this demotivation:
+            Share today's demotivation:
           </p>
           
           <div className="grid grid-cols-2 gap-4">
@@ -105,21 +92,10 @@ export default function ShareButton({ quote }: ShareButtonProps) {
             />
             
             <ShareAction
-              icon={<FaInstagram className="w-10 h-10" />}
-              label="Instagram"
-              onClick={handleInstagram}
-            />
-            
-            <ShareAction
-              icon={<FaWhatsapp className="w-10 h-10" />}
-              label="WhatsApp"
-              onClick={handleWhatsApp}
-            />
-            
-            <ShareAction
-              icon={<FaLinkedin className="w-10 h-10" />}
-              label="LinkedIn"
-              onClick={handleLinkedIn}
+              icon={<FiShare2 className="w-10 h-10" />}
+              label="Share"
+              onClick={handleShare}
+              disabled={isSharing}
             />
           </div>
         </div>

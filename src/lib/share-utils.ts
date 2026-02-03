@@ -13,41 +13,41 @@ export function getCurrentUrl(): string {
 }
 
 /**
- * Triggers download of the daily quote image with actual Unsplash background
- * Uses client-side canvas to composite quote on top of the landscape image
+ * Creates a canvas with the quote composited on the Unsplash background
+ * Returns a blob that can be downloaded or shared
  */
-export async function downloadImage(quote: string, onSuccess: () => void, onError: (error: string) => void) {
-  try {
-    // Get the background image from the page
-    const bgElement = document.querySelector<HTMLDivElement>('.fixed.inset-0.-z-10');
-    if (!bgElement) {
-      throw new Error('Background image not found');
-    }
+async function createImageBlob(quote: string): Promise<Blob> {
+  // Get the background image from the page
+  const bgElement = document.querySelector<HTMLDivElement>('.fixed.inset-0.-z-10');
+  if (!bgElement) {
+    throw new Error('Background image not found');
+  }
 
-    // Extract the image URL from the background
-    const bgStyle = window.getComputedStyle(bgElement);
-    const bgImage = bgStyle.backgroundImage;
-    const urlMatch = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
-    
-    if (!urlMatch || !urlMatch[1]) {
-      throw new Error('Could not extract background image URL');
-    }
+  // Extract the image URL from the background
+  const bgStyle = window.getComputedStyle(bgElement);
+  const bgImage = bgStyle.backgroundImage;
+  const urlMatch = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
+  
+  if (!urlMatch || !urlMatch[1]) {
+    throw new Error('Could not extract background image URL');
+  }
 
-    const imageUrl = urlMatch[1];
+  const imageUrl = urlMatch[1];
 
-    // Create a canvas to composite the image
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    if (!ctx) {
-      throw new Error('Could not create canvas context');
-    }
+  // Create a canvas to composite the image
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  if (!ctx) {
+    throw new Error('Could not create canvas context');
+  }
 
-    // Set canvas size (1200x1200 for Instagram)
-    canvas.width = 1200;
-    canvas.height = 1200;
+  // Set canvas size (1200x1200 for Instagram)
+  canvas.width = 1200;
+  canvas.height = 1200;
 
-    // Load the background image
+  // Load the background image
+  return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous'; // Enable CORS
     
@@ -106,36 +106,47 @@ export async function downloadImage(quote: string, onSuccess: () => void, onErro
         ctx.font = '20px sans-serif';
         ctx.fillText('dailydemotivations.com', canvas.width / 2, canvas.height - 60);
 
-        // Convert canvas to blob and trigger download
+        // Convert canvas to blob
         canvas.toBlob((blob) => {
           if (!blob) {
-            throw new Error('Failed to create image blob');
+            reject(new Error('Failed to create image blob'));
+            return;
           }
-
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `demotivation-${new Date().toISOString().split('T')[0]}.png`;
-          document.body.appendChild(a);
-          a.click();
-          
-          // Cleanup
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-          
-          onSuccess();
+          resolve(blob);
         }, 'image/png');
       } catch (error) {
-        console.error('Canvas composition error:', error);
-        onError('Failed to create image');
+        reject(error);
       }
     };
 
     img.onerror = () => {
-      onError('Failed to load background image');
+      reject(new Error('Failed to load background image'));
     };
 
     img.src = imageUrl;
+  });
+}
+
+/**
+ * Triggers download of the daily quote image with actual Unsplash background
+ * Uses client-side canvas to composite quote on top of the landscape image
+ */
+export async function downloadImage(quote: string, onSuccess: () => void, onError: (error: string) => void) {
+  try {
+    const blob = await createImageBlob(quote);
+    
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `demotivation-${new Date().toISOString().split('T')[0]}.png`;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
+    onSuccess();
   } catch (error) {
     console.error('Download error:', error);
     onError('Failed to download image');
@@ -143,41 +154,49 @@ export async function downloadImage(quote: string, onSuccess: () => void, onErro
 }
 
 /**
- * Opens Instagram app or web with intent to share
- * Note: Instagram doesn't support direct URL sharing on web,
- * so we just open Instagram and let the user share manually after downloading
+ * Shares the image using Web Share API
+ * Falls back to showing an error if Web Share is not supported
  */
-export function shareToInstagram(onSuccess: () => void) {
-  // On mobile, try to open Instagram app
-  if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-    // Instagram doesn't support web URL sharing, so we open the app
-    // User will need to manually create post after downloading image
-    window.open('instagram://camera', '_blank');
+export async function shareImage(quote: string, onSuccess: () => void, onError: (error: string) => void) {
+  try {
+    // Check if Web Share API is supported
+    if (!navigator.share) {
+      onError('Sharing is not supported on this device. Try downloading instead.');
+      return;
+    }
+
+    // Create the image blob
+    const blob = await createImageBlob(quote);
+    
+    // Create a file from the blob
+    const file = new File(
+      [blob], 
+      `demotivation-${new Date().toISOString().split('T')[0]}.png`, 
+      { type: 'image/png' }
+    );
+
+    // Check if we can share files
+    if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+      onError('Sharing images is not supported on this device. Try downloading instead.');
+      return;
+    }
+
+    // Share the image
+    await navigator.share({
+      title: 'Daily Demotivations',
+      text: `"${quote}"`,
+      files: [file],
+    });
+
     onSuccess();
-  } else {
-    // On desktop, open Instagram web
-    window.open('https://www.instagram.com/', '_blank');
-    onSuccess();
+  } catch (error: any) {
+    // User cancelled sharing
+    if (error.name === 'AbortError') {
+      console.log('Share cancelled by user');
+      return;
+    }
+    
+    console.error('Share error:', error);
+    onError('Failed to share. Try downloading instead.');
   }
-}
-
-/**
- * Shares to WhatsApp with quote and URL
- */
-export function shareToWhatsApp(quote: string, url: string, onSuccess: () => void) {
-  const text = encodeURIComponent(`${quote}\n\n${url}`);
-  const whatsappUrl = `https://wa.me/?text=${text}`;
-  
-  window.open(whatsappUrl, '_blank');
-  onSuccess();
-}
-
-/**
- * Shares to LinkedIn with URL
- */
-export function shareToLinkedIn(url: string, onSuccess: () => void) {
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-  
-  window.open(linkedInUrl, '_blank');
-  onSuccess();
 }
