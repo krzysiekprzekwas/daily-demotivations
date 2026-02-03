@@ -121,7 +121,7 @@ export async function autoSchedulePairings(
   days: number = 30
 ): Promise<AutoScheduleResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     if (days < 1 || days > 365) {
       return { success: false, error: 'Days must be between 1 and 365' };

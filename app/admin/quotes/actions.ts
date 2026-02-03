@@ -19,7 +19,7 @@ export type ActionResult =
  */
 export async function createQuote(formData: FormData): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const text = formData.get('text') as string;
     const author = formData.get('author') as string || null;
@@ -77,7 +77,7 @@ export async function updateQuote(
   formData: FormData
 ): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const text = formData.get('text') as string;
     const author = formData.get('author') as string || null;
@@ -143,7 +143,7 @@ export async function updateQuote(
  */
 export async function deleteQuote(id: string): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     // Check if quote exists and count pairings
     const quote = await prisma.quote.findUnique({
@@ -187,7 +187,7 @@ export async function deleteQuote(id: string): Promise<ActionResult> {
  */
 export async function toggleQuoteActive(id: string): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const quote = await prisma.quote.findUnique({
       where: { id },

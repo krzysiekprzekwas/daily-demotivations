@@ -18,7 +18,7 @@ export type ActionResult =
  */
 export async function createImage(formData: FormData): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const url = formData.get('url') as string;
     const photographerName = formData.get('photographer_name') as string;
@@ -84,7 +84,7 @@ export async function updateImage(
   formData: FormData
 ): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const url = formData.get('url') as string;
     const photographerName = formData.get('photographer_name') as string;
@@ -158,7 +158,7 @@ export async function updateImage(
  */
 export async function deleteImage(id: string): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     // Check if image exists and count pairings
     const image = await prisma.image.findUnique({
@@ -202,7 +202,7 @@ export async function deleteImage(id: string): Promise<ActionResult> {
  */
 export async function toggleImageActive(id: string): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const image = await prisma.image.findUnique({
       where: { id },

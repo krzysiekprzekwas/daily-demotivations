@@ -67,7 +67,7 @@ async function check5DayRepetition(
  */
 export async function createPairing(formData: FormData): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     const quoteId = formData.get('quoteId') as string;
     const imageSource = formData.get('imageSource') as string; // 'unsplash' or 'existing'
@@ -203,7 +203,7 @@ export async function createPairing(formData: FormData): Promise<ActionResult> {
  */
 export async function deletePairing(id: string): Promise<ActionResult> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     // Check if pairing exists
     const pairing = await prisma.pairing.findUnique({
@@ -238,7 +238,7 @@ export async function validatePairing(
   dateString: string
 ): Promise<{ valid: boolean; warning?: string; error?: string }> {
   try {
-    await requireAuth();
+    await requireAuth(true);
 
     if (!quoteId || !dateString) {
       return { valid: false, error: 'Quote and date are required' };
