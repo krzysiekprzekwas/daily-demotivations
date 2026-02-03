@@ -33,8 +33,7 @@ export default async function LoginPage({
 
         {/* Login Form */}
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-xl p-8 border border-gray-700">
-          <form action={loginAction} className="space-y-6">
-            {/* Hidden redirect field */}
+          <form action={loginAction as unknown as (formData: FormData) => void} className="space-y-6">{/* Hidden redirect field */}
             {redirectUrl && (
               <input type="hidden" name="redirect" value={redirectUrl} />
             )}

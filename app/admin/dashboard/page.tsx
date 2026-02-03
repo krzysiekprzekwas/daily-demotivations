@@ -1,5 +1,6 @@
 import { requireAuth, getSession } from '@/lib/session';
 import { logoutAction } from '../login/actions';
+import { prisma } from '@/lib/prisma';
 
 /**
  * Admin Dashboard
@@ -14,6 +15,13 @@ export default async function DashboardPage() {
   const loginTime = session.loginTime 
     ? new Date(session.loginTime).toLocaleString() 
     : 'Unknown';
+
+  // Fetch real database counts
+  const [quotesCount, imagesCount, pairingsCount] = await Promise.all([
+    prisma.quote.count(),
+    prisma.image.count(),
+    prisma.pairing.count(),
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,7 +64,7 @@ export default async function DashboardPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Quotes
             </h3>
-            <p className="text-3xl font-bold text-blue-600">30</p>
+            <p className="text-3xl font-bold text-blue-600">{quotesCount}</p>
             <p className="text-sm text-gray-500 mt-1">Total quotes</p>
           </div>
           
@@ -64,7 +72,7 @@ export default async function DashboardPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Images
             </h3>
-            <p className="text-3xl font-bold text-green-600">0</p>
+            <p className="text-3xl font-bold text-green-600">{imagesCount}</p>
             <p className="text-sm text-gray-500 mt-1">Total images</p>
           </div>
           
@@ -72,7 +80,7 @@ export default async function DashboardPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Pairings
             </h3>
-            <p className="text-3xl font-bold text-purple-600">0</p>
+            <p className="text-3xl font-bold text-purple-600">{pairingsCount}</p>
             <p className="text-sm text-gray-500 mt-1">Scheduled pairings</p>
           </div>
         </div>
@@ -118,8 +126,8 @@ export default async function DashboardPage() {
 
         {/* Info */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          <p>Plan 02: Authentication & Session Management ✅</p>
-          <p className="mt-1">Coming soon: Plans 03-05 (CRUD, Pairings, Frontend Integration)</p>
+          <p>Plan 03: Admin CRUD (Quotes & Images) ✅</p>
+          <p className="mt-1">Coming soon: Plans 04-05 (Pairings, Frontend Integration)</p>
         </div>
       </main>
     </div>
