@@ -230,7 +230,7 @@ export default async function PairingsPage({
                           {/* Quote Overlay */}
                           <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
                             <blockquote className="text-white text-center">
-                              <p className="text-sm sm:text-base font-serif leading-relaxed mb-2">
+                              <p className="text-sm sm:text-base font-serif leading-relaxed mb-2 whitespace-pre-wrap">
                                 {pairing.quote.text}
                               </p>
                               {pairing.quote.author && (

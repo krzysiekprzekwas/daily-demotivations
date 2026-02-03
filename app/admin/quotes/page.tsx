@@ -118,7 +118,7 @@ export default async function QuotesPage({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Max 500 characters
+                Max 500 characters. Press Enter to add line breaks.
               </p>
             </div>
 
@@ -186,7 +186,7 @@ export default async function QuotesPage({
                   <div className="flex justify-between items-start gap-4">
                     {/* Quote Content */}
                     <div className="flex-1">
-                      <p className="text-gray-900 mb-1">{quote.text}</p>
+                      <p className="text-gray-900 mb-1 whitespace-pre-wrap">{quote.text}</p>
                       {quote.author && (
                         <p className="text-sm text-gray-500">— {quote.author}</p>
                       )}

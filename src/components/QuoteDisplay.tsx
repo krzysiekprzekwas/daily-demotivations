@@ -29,6 +29,7 @@ export default function QuoteDisplay({ quote }: QuoteDisplayProps) {
           tracking-tight
           drop-shadow-2xl
           px-4
+          whitespace-pre-wrap
         "
       >
         "{quote}"
