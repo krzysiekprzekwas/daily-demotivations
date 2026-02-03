@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FaFacebook, FaTwitter, FaLinkedin, FaShareAlt } from 'react-icons/fa';
+import { getShareText, getCurrentUrl } from '@/lib/share-utils';
 
 interface ShareButtonProps {
   quote: string;
@@ -22,8 +23,8 @@ export default function ShareButton({ quote }: ShareButtonProps) {
       setIsSharing(true);
       setError(null);
 
-      const shareUrl = window.location.href;
-      const shareText = `"${quote}"\n\nDaily Demotivations`;
+      const shareUrl = getCurrentUrl();
+      const shareText = getShareText(quote, 'generic');
 
       // Try to fetch and share the image (Web Share Level 2)
       try {
@@ -73,8 +74,8 @@ export default function ShareButton({ quote }: ShareButtonProps) {
   };
 
   const handleDirectShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
-    const shareUrl = window.location.href;
-    const shareText = `"${quote}" - Daily Demotivations`;
+    const shareUrl = getCurrentUrl();
+    const shareText = getShareText(quote, platform);
     
     let url = '';
     
@@ -243,12 +244,14 @@ export default function ShareButton({ quote }: ShareButtonProps) {
       )}
 
       {/* Option to show direct share buttons */}
-      <button
-        onClick={() => setShowFallback(true)}
-        className="text-white/50 text-xs hover:text-white/70 transition-colors underline"
-      >
-        or share directly
-      </button>
+      {!showFallback && (
+        <button
+          onClick={() => setShowFallback(true)}
+          className="text-white/50 text-xs hover:text-white/70 transition-colors underline"
+        >
+          or share directly
+        </button>
+      )}
     </div>
   );
 }
