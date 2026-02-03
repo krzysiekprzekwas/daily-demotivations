@@ -17,12 +17,14 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: 'Daily Demotivations',
       description: quote,
+      url: '/',
       images: [
         {
           url: '/api/og',
           width: 1200,
           height: 630,
           alt: quote,
+          type: 'image/png',
         },
       ],
       type: 'website',
