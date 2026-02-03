@@ -1,7 +1,8 @@
 import { getTodaysContent } from '@/lib/quotes-db';
 import { format } from 'date-fns';
 
-export const runtime = 'edge';
+// Use Node.js runtime instead of Edge to avoid 1MB size limit
+export const runtime = 'nodejs';
 
 export async function GET() {
   try {
