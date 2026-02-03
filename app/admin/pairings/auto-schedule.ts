@@ -162,8 +162,24 @@ export async function autoSchedulePairings(
       targetDate.setDate(targetDate.getDate() + i);
       const dateString = targetDate.toISOString().split('T')[0];
 
-      // Skip if already has a pairing
+      // Skip if already has a pairing (check the Set)
       if (existingDates.has(dateString)) {
+        console.log(
+          `[auto-schedule] Date ${dateString} already has a pairing - skipping`
+        );
+        continue;
+      }
+
+      // Double-check database right before creating (handles concurrent edits)
+      const existingPairing = await prisma.pairing.findUnique({
+        where: { date: targetDate },
+      });
+
+      if (existingPairing) {
+        console.log(
+          `[auto-schedule] Date ${dateString} was just scheduled - skipping`
+        );
+        existingDates.add(dateString); // Update our set
         continue;
       }
 
@@ -205,17 +221,32 @@ export async function autoSchedulePairings(
 
       newImagesCreated++;
 
-      // Create pairing
-      await prisma.pairing.create({
-        data: {
-          quoteId,
-          imageId: newImage.id,
-          date: targetDate,
-        },
-      });
+      // Create pairing (with error handling for duplicate dates)
+      try {
+        await prisma.pairing.create({
+          data: {
+            quoteId,
+            imageId: newImage.id,
+            date: targetDate,
+          },
+        });
 
-      usedQuoteIdsInBatch.add(quoteId);
-      totalScheduled++;
+        usedQuoteIdsInBatch.add(quoteId);
+        totalScheduled++;
+      } catch (error: any) {
+        // If unique constraint fails (date already exists), skip this date
+        if (error.code === 'P2002') {
+          console.log(
+            `[auto-schedule] Date ${dateString} already has a pairing - skipping`
+          );
+          // Clean up the unused image we just created
+          await prisma.image.delete({ where: { id: newImage.id } });
+          newImagesCreated--;
+          continue;
+        }
+        // Re-throw other errors
+        throw error;
+      }
     }
 
     // Revalidate affected pages
