@@ -1,15 +1,33 @@
 import { ImageResponse } from 'next/og';
 import { getTodaysQuote } from '@/lib/quotes';
-import { format } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
+import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const quote = getTodaysQuote();
-    const today = format(new Date(), 'MMMM d, yyyy');
+    // Support date parameter for future permalink functionality
+    const searchParams = request.nextUrl.searchParams;
+    const dateParam = searchParams.get('date');
+    
+    let targetDate = new Date();
+    let quote = getTodaysQuote();
+    
+    // If date parameter provided, use it (format: YYYY-MM-DD)
+    if (dateParam) {
+      const parsedDate = parse(dateParam, 'yyyy-MM-dd', new Date());
+      if (isValid(parsedDate)) {
+        targetDate = parsedDate;
+        // For now, still use today's quote since we don't have date-specific quotes yet
+        // This will be enhanced when permalink feature is implemented
+        quote = getTodaysQuote();
+      }
+    }
+    
+    const formattedDate = format(targetDate, 'MMMM d, yyyy');
 
-    return new ImageResponse(
+    const imageResponse = new ImageResponse(
       (
         <div
           style={{
@@ -37,7 +55,7 @@ export async function GET() {
               marginBottom: 60,
             }}
           >
-            {today}
+            {formattedDate}
           </div>
 
           {/* Quote text with serif style */}
@@ -75,6 +93,20 @@ export async function GET() {
         height: 630,
       },
     );
+    
+    // Set aggressive cache headers
+    // If date parameter is provided, cache immutably (permalink)
+    // Otherwise, cache for 24 hours (current day)
+    const cacheControl = dateParam
+      ? 'public, max-age=31536000, immutable' // 1 year, immutable for permalinks
+      : 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=43200'; // 24h cache, 12h stale
+    
+    return new Response(imageResponse.body, {
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': cacheControl,
+      },
+    });
   } catch (error) {
     console.error('OG image generation failed:', error);
     
