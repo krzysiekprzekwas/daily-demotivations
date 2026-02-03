@@ -13,35 +13,129 @@ export function getCurrentUrl(): string {
 }
 
 /**
- * Triggers download of the daily quote image
+ * Triggers download of the daily quote image with actual Unsplash background
+ * Uses client-side canvas to composite quote on top of the landscape image
  */
 export async function downloadImage(quote: string, onSuccess: () => void, onError: (error: string) => void) {
   try {
-    const response = await fetch('/api/download');
-    
-    if (!response.ok) {
-      throw new Error('Failed to download image');
+    // Get the background image from the page
+    const bgElement = document.querySelector<HTMLDivElement>('.fixed.inset-0.-z-10');
+    if (!bgElement) {
+      throw new Error('Background image not found');
     }
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
+    // Extract the image URL from the background
+    const bgStyle = window.getComputedStyle(bgElement);
+    const bgImage = bgStyle.backgroundImage;
+    const urlMatch = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
     
-    // Extract filename from Content-Disposition header
-    const contentDisposition = response.headers.get('content-disposition');
-    const filenameMatch = contentDisposition?.match(/filename="(.+)"/);
-    const filename = filenameMatch ? filenameMatch[1] : 'demotivation.png';
+    if (!urlMatch || !urlMatch[1]) {
+      throw new Error('Could not extract background image URL');
+    }
+
+    const imageUrl = urlMatch[1];
+
+    // Create a canvas to composite the image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
+    if (!ctx) {
+      throw new Error('Could not create canvas context');
+    }
+
+    // Set canvas size (1200x1200 for Instagram)
+    canvas.width = 1200;
+    canvas.height = 1200;
+
+    // Load the background image
+    const img = new Image();
+    img.crossOrigin = 'anonymous'; // Enable CORS
     
-    // Cleanup
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-    
-    onSuccess();
+    img.onload = () => {
+      try {
+        // Draw the background image (cover fit)
+        const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+        const imgX = (canvas.width - img.width * scale) / 2;
+        const imgY = (canvas.height - img.height * scale) / 2;
+        
+        ctx.drawImage(img, imgX, imgY, img.width * scale, img.height * scale);
+
+        // Draw darkening overlay (40% black)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the date
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = '24px sans-serif';
+        ctx.textAlign = 'center';
+        const today = new Date().toLocaleDateString('en-US', { 
+          month: 'long', 
+          day: 'numeric', 
+          year: 'numeric' 
+        });
+        ctx.fillText(today.toUpperCase(), canvas.width / 2, 150);
+
+        // Draw the quote
+        ctx.fillStyle = 'white';
+        ctx.font = '600 56px serif';
+        ctx.textAlign = 'center';
+        
+        // Word wrap the quote
+        const maxWidth = canvas.width - 200; // 100px padding on each side
+        const lineHeight = 80;
+        const words = `"${quote}"`.split(' ');
+        let line = '';
+        let textY = canvas.height / 2 - 100;
+
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + words[n] + ' ';
+          const metrics = ctx.measureText(testLine);
+          
+          if (metrics.width > maxWidth && n > 0) {
+            ctx.fillText(line, canvas.width / 2, textY);
+            line = words[n] + ' ';
+            textY += lineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, canvas.width / 2, textY);
+
+        // Draw attribution
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.font = '20px sans-serif';
+        ctx.fillText('dailydemotivations.com', canvas.width / 2, canvas.height - 60);
+
+        // Convert canvas to blob and trigger download
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            throw new Error('Failed to create image blob');
+          }
+
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `demotivation-${new Date().toISOString().split('T')[0]}.png`;
+          document.body.appendChild(a);
+          a.click();
+          
+          // Cleanup
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
+          onSuccess();
+        }, 'image/png');
+      } catch (error) {
+        console.error('Canvas composition error:', error);
+        onError('Failed to create image');
+      }
+    };
+
+    img.onerror = () => {
+      onError('Failed to load background image');
+    };
+
+    img.src = imageUrl;
   } catch (error) {
     console.error('Download error:', error);
     onError('Failed to download image');
