@@ -4,6 +4,7 @@ import { createPairing, deletePairing } from './actions';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import DeleteButton from '@/components/DeleteButton';
+import PairingForm from '@/components/PairingForm';
 
 /**
  * Admin Pairings Management Page
@@ -110,30 +111,22 @@ export default async function PairingsPage({
             Create New Pairing
           </h2>
 
-          {quotes.length === 0 || images.length === 0 ? (
+          {quotes.length === 0 ? (
             <div className="text-gray-600">
-              {quotes.length === 0 && (
-                <p className="mb-2">
-                  ⚠️ No active quotes available.{' '}
-                  <a href="/admin/quotes" className="text-blue-600 hover:underline">
-                    Add quotes first
-                  </a>
-                  .
-                </p>
-              )}
-              {images.length === 0 && (
-                <p>
-                  ⚠️ No active images available.{' '}
-                  <a href="/admin/images" className="text-blue-600 hover:underline">
-                    Add images first
-                  </a>
-                  .
-                </p>
-              )}
+              <p className="mb-2">
+                ⚠️ No active quotes available.{' '}
+                <a href="/admin/quotes" className="text-blue-600 hover:underline">
+                  Add quotes first
+                </a>
+                .
+              </p>
             </div>
           ) : (
-            <form
-              action={async (formData: FormData) => {
+            <PairingForm
+              quotes={quotes}
+              images={images}
+              todayString={todayString}
+              onSubmit={async (formData: FormData) => {
                 'use server';
                 const result = await createPairing(formData);
 
@@ -147,90 +140,7 @@ export default async function PairingsPage({
                   );
                 }
               }}
-              className="space-y-4"
-            >
-              {/* Date Picker */}
-              <div>
-                <label
-                  htmlFor="date"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Date *
-                </label>
-                <input
-                  id="date"
-                  name="date"
-                  type="date"
-                  required
-                  min={todayString}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Each date can only have one pairing
-                </p>
-              </div>
-
-              {/* Quote Dropdown */}
-              <div>
-                <label
-                  htmlFor="quoteId"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Quote *
-                </label>
-                <select
-                  id="quoteId"
-                  name="quoteId"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select a quote...</option>
-                  {quotes.map((quote) => (
-                    <option key={quote.id} value={quote.id}>
-                      {quote.text.substring(0, 100)}
-                      {quote.text.length > 100 ? '...' : ''}
-                      {quote.author ? ` — ${quote.author}` : ''}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  ⚠️ System will warn if quote was used in past 5 days
-                </p>
-              </div>
-
-              {/* Image Dropdown */}
-              <div>
-                <label
-                  htmlFor="imageId"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Image *
-                </label>
-                <select
-                  id="imageId"
-                  name="imageId"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select an image...</option>
-                  {images.map((image) => (
-                    <option key={image.id} value={image.id}>
-                      {image.photographerName} ({image.source})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Submit Button */}
-              <div>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
-                >
-                  Create Pairing
-                </button>
-              </div>
-            </form>
+            />
           )}
         </div>
 

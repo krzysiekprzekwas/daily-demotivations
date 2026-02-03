@@ -63,18 +63,20 @@ async function check5DayRepetition(
 /**
  * Create a new pairing
  * Includes 5-day repetition check and date conflict detection
+ * Can either use existing image or fetch random from Unsplash
  */
 export async function createPairing(formData: FormData): Promise<ActionResult> {
   try {
     await requireAuth();
 
     const quoteId = formData.get('quoteId') as string;
-    const imageId = formData.get('imageId') as string;
+    const imageSource = formData.get('imageSource') as string; // 'unsplash' or 'existing'
+    const imageId = formData.get('imageId') as string; // Only used if imageSource === 'existing'
     const dateString = formData.get('date') as string;
 
     // Validation
-    if (!quoteId || !imageId || !dateString) {
-      return { success: false, error: 'Quote, image, and date are required' };
+    if (!quoteId || !dateString || !imageSource) {
+      return { success: false, error: 'Quote, image source, and date are required' };
     }
 
     // Parse date (YYYY-MM-DD format)
@@ -105,17 +107,48 @@ export async function createPairing(formData: FormData): Promise<ActionResult> {
       return { success: false, error: 'Cannot use inactive quote' };
     }
 
-    // Check if image exists and is active
-    const image = await prisma.image.findUnique({
-      where: { id: imageId },
-    });
+    // Handle image based on source
+    let finalImageId: string;
 
-    if (!image) {
-      return { success: false, error: 'Image not found' };
-    }
+    if (imageSource === 'unsplash') {
+      // Fetch random Unsplash image and create Image record
+      const { getRandomLandscape } = await import('@/lib/unsplash');
+      const unsplashPhoto = await getRandomLandscape();
 
-    if (!image.active) {
-      return { success: false, error: 'Cannot use inactive image' };
+      // Create image record in database
+      const newImage = await prisma.image.create({
+        data: {
+          url: unsplashPhoto.url,
+          photographerName: unsplashPhoto.photographer,
+          photographerUrl: unsplashPhoto.photographerUrl,
+          source: 'Unsplash',
+          active: true,
+        },
+      });
+
+      finalImageId = newImage.id;
+    } else if (imageSource === 'existing') {
+      // Use existing image
+      if (!imageId) {
+        return { success: false, error: 'Please select an existing image' };
+      }
+
+      // Check if image exists and is active
+      const image = await prisma.image.findUnique({
+        where: { id: imageId },
+      });
+
+      if (!image) {
+        return { success: false, error: 'Image not found' };
+      }
+
+      if (!image.active) {
+        return { success: false, error: 'Cannot use inactive image' };
+      }
+
+      finalImageId = imageId;
+    } else {
+      return { success: false, error: 'Invalid image source' };
     }
 
     // Check for date conflict (one pairing per day)
@@ -137,23 +170,28 @@ export async function createPairing(formData: FormData): Promise<ActionResult> {
     await prisma.pairing.create({
       data: {
         quoteId,
-        imageId,
+        imageId: finalImageId,
         date,
       },
     });
 
     revalidatePath('/admin/pairings');
     revalidatePath('/admin/dashboard');
+    revalidatePath('/admin/images'); // In case we created a new image
 
     // Return success with optional warning
+    const successMessage = imageSource === 'unsplash' 
+      ? 'Pairing created with new Unsplash image'
+      : 'Pairing created successfully';
+
     if (hasWarning) {
       return {
         success: true,
-        message: `Pairing created successfully. ${warning}`,
+        message: `${successMessage}. ${warning}`,
       };
     }
 
-    return { success: true, message: 'Pairing created successfully' };
+    return { success: true, message: successMessage };
   } catch (error) {
     console.error('Error creating pairing:', error);
     return { success: false, error: 'Failed to create pairing' };
