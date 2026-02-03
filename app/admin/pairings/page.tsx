@@ -185,11 +185,11 @@ export default async function PairingsPage({
                 return (
                   <div
                     key={pairing.id}
-                    className={`px-6 py-4 hover:bg-gray-50 transition ${
+                    className={`px-6 py-6 hover:bg-gray-50 transition ${
                       isToday ? 'bg-blue-50' : ''
                     }`}
                   >
-                    <div className="flex gap-4">
+                    <div className="flex gap-6">
                       {/* Date Badge */}
                       <div className="flex-shrink-0">
                         <div className={`w-20 text-center py-2 rounded ${
@@ -212,52 +212,88 @@ export default async function PairingsPage({
                         )}
                       </div>
 
-                      {/* Image Thumbnail */}
+                      {/* Preview: Quote overlaid on Image */}
                       <div className="flex-shrink-0">
-                        <div className="w-32 h-20 relative bg-gray-200 rounded overflow-hidden">
+                        <div className="w-80 h-48 relative bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                          {/* Background Image */}
                           <Image
                             src={pairing.image.url}
                             alt={`Photo by ${pairing.image.photographerName}`}
                             fill
                             className="object-cover"
-                            sizes="128px"
+                            sizes="320px"
+                          />
+                          
+                          {/* Darkening Overlay */}
+                          <div className="absolute inset-0 bg-black/40" />
+                          
+                          {/* Quote Overlay */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
+                            <blockquote className="text-white text-center">
+                              <p className="text-sm sm:text-base font-serif leading-relaxed mb-2">
+                                {pairing.quote.text}
+                              </p>
+                              {pairing.quote.author && (
+                                <footer className="text-xs sm:text-sm opacity-90">
+                                  — {pairing.quote.author}
+                                </footer>
+                              )}
+                            </blockquote>
+                          </div>
+                          
+                          {/* Small attribution at bottom */}
+                          <div className="absolute bottom-2 right-2 text-[10px] text-white/60">
+                            Photo by {pairing.image.photographerName}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Metadata */}
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="text-xs text-gray-500 mb-2">
+                            <span className="font-medium">Quote ID:</span> {pairing.quoteId.substring(0, 8)}...
+                          </div>
+                          <div className="text-xs text-gray-500 mb-2">
+                            <span className="font-medium">Image ID:</span> {pairing.imageId.substring(0, 8)}...
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            <span className="font-medium">Photographer:</span>{' '}
+                            {pairing.image.photographerUrl ? (
+                              <a
+                                href={pairing.image.photographerUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline"
+                              >
+                                {pairing.image.photographerName}
+                              </a>
+                            ) : (
+                              pairing.image.photographerName
+                            )}
+                            {' '}• {pairing.image.source}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="mt-4">
+                          <DeleteButton
+                            itemName={`pairing for ${pairingDate.toLocaleDateString()}`}
+                            onDelete={async () => {
+                              'use server';
+                              const result = await deletePairing(pairing.id);
+                              if (result.success) {
+                                redirect(
+                                  `/admin/pairings?success=${encodeURIComponent(result.message || 'Success')}`
+                                );
+                              } else {
+                                redirect(
+                                  `/admin/pairings?error=${encodeURIComponent(result.error)}`
+                                );
+                              }
+                            }}
                           />
                         </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1">
-                        <p className="text-gray-900 font-medium mb-1">
-                          {pairing.quote.text}
-                        </p>
-                        {pairing.quote.author && (
-                          <p className="text-sm text-gray-500 mb-2">
-                            — {pairing.quote.author}
-                          </p>
-                        )}
-                        <div className="text-xs text-gray-400">
-                          Photo by {pairing.image.photographerName} • {pairing.image.source}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex-shrink-0">
-                        <DeleteButton
-                          itemName={`pairing for ${pairingDate.toLocaleDateString()}`}
-                          onDelete={async () => {
-                            'use server';
-                            const result = await deletePairing(pairing.id);
-                            if (result.success) {
-                              redirect(
-                                `/admin/pairings?success=${encodeURIComponent(result.message || 'Success')}`
-                              );
-                            } else {
-                              redirect(
-                                `/admin/pairings?error=${encodeURIComponent(result.error)}`
-                              );
-                            }
-                          }}
-                        />
                       </div>
                     </div>
                   </div>
