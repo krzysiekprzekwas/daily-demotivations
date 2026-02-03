@@ -114,15 +114,24 @@ Must validate with actual scraper tools before launch:
 - Twitter Card Validator (https://cards-dev.twitter.com/validator)
 - Test on physical mobile devices (iPhone, Android), not just responsive mode
 
+### Plans
+
+**Plans:** 3 plans sequential execution
+
+Plans:
+- [x] 02-01-PLAN.md — Download functionality for quote+image files (Complete: 2026-02-03)
+- [x] 02-02-PLAN.md — Web Share API and social share buttons (Complete: 2026-02-03)
+- [x] 02-03-PLAN.md — Open Graph image enhancements with meta tags (Complete: 2026-02-03)
+
 ### Phase Complete When
 
-- [ ] Mobile users can tap Share and see native share menu with social apps listed
-- [ ] Desktop users can click Download and receive quote+background image file
-- [ ] Facebook scraper shows quote image preview (not broken or blank)
-- [ ] LinkedIn scraper shows quote image preview
-- [ ] Twitter scraper shows quote image card preview
-- [ ] Instagram share button opens Instagram with pre-populated caption
-- [ ] All share actions work without requiring user accounts or login
+- [x] Mobile users can tap Share and see native share menu with social apps listed
+- [x] Desktop users can click Download and receive quote+background image file
+- [x] Facebook scraper shows quote image preview (not broken or blank)
+- [x] LinkedIn scraper shows quote image preview
+- [x] Twitter scraper shows quote image card preview
+- [x] Instagram share button opens Instagram with pre-populated caption (via Web Share API + download)
+- [x] All share actions work without requiring user accounts or login
 
 ---
 

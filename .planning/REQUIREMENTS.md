@@ -16,10 +16,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Social Sharing
 
-- [ ] **SHARE-01**: User can download the quote+image as a single image file (PNG/JPEG)
-- [ ] **SHARE-02**: User can share via native mobile share menu (Web Share API)
-- [ ] **SHARE-03**: Shared links display proper Open Graph preview images on social platforms
-- [ ] **SHARE-04**: User can share directly to Facebook, LinkedIn, and Instagram via share buttons
+- [x] **SHARE-01**: User can download the quote+image as a single image file (PNG/JPEG)
+- [x] **SHARE-02**: User can share via native mobile share menu (Web Share API)
+- [x] **SHARE-03**: Shared links display proper Open Graph preview images on social platforms
+- [x] **SHARE-04**: User can share directly to Facebook, LinkedIn, and Instagram via share buttons (Note: Instagram via Web Share API + download, no direct button due to platform limitation)
 
 ### Content Management
 
@@ -88,10 +88,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-02 | Phase 1 | Complete |
 | CORE-03 | Phase 1 | Complete |
 | CORE-04 | Phase 1 | Complete |
-| SHARE-01 | Phase 2 | Pending |
-| SHARE-02 | Phase 2 | Pending |
-| SHARE-03 | Phase 2 | Pending |
-| SHARE-04 | Phase 2 | Pending |
+| SHARE-01 | Phase 2 | Complete |
+| SHARE-02 | Phase 2 | Complete |
+| SHARE-03 | Phase 2 | Complete |
+| SHARE-04 | Phase 2 | Complete (w/ deviation) |
 | CONTENT-01 | Phase 1 | Complete |
 | CONTENT-02 | Phase 1 | Complete |
 | TECH-01 | Phase 1 | Complete |
