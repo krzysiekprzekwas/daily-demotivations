@@ -1,10 +1,12 @@
 import { requireAuth } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
 import { createPairing, deletePairing } from './actions';
+import { autoSchedulePairings } from './auto-schedule';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import DeleteButton from '@/components/DeleteButton';
 import PairingForm from '@/components/PairingForm';
+import AutoScheduleButton from '@/components/AutoScheduleButton';
 
 /**
  * Admin Pairings Management Page
@@ -88,6 +90,21 @@ export default async function PairingsPage({
               Manage Pairings
             </h1>
           </div>
+          
+          {/* Auto-Schedule Button */}
+          <AutoScheduleButton
+            onAutoSchedule={async (days: number) => {
+              'use server';
+              const result = await autoSchedulePairings(days);
+              
+              // Redirect to show updated list
+              if (result.success && result.details && result.details.totalScheduled > 0) {
+                redirect(`/admin/pairings?success=${encodeURIComponent(result.message || 'Success')}`);
+              }
+              
+              return result;
+            }}
+          />
         </div>
       </header>
 
