@@ -64,9 +64,9 @@ export async function downloadImage(quote: string, onSuccess: () => void, onErro
         ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw the date
+        // Draw the date (using light font weight like the page)
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.font = '24px sans-serif';
+        ctx.font = '300 24px sans-serif'; // font-light (300)
         ctx.textAlign = 'center';
         const today = new Date().toLocaleDateString('en-US', { 
           month: 'long', 
@@ -75,9 +75,9 @@ export async function downloadImage(quote: string, onSuccess: () => void, onErro
         });
         ctx.fillText(today.toUpperCase(), canvas.width / 2, 150);
 
-        // Draw the quote
+        // Draw the quote (using normal font weight like the page)
         ctx.fillStyle = 'white';
-        ctx.font = '600 56px serif';
+        ctx.font = '400 56px serif'; // font-normal (400), not 600
         ctx.textAlign = 'center';
         
         // Word wrap the quote
