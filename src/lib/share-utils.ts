@@ -104,7 +104,7 @@ async function createImageBlob(quote: string): Promise<Blob> {
         // Draw attribution
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
         ctx.font = '20px sans-serif';
-        ctx.fillText('dailydemotivations.com', canvas.width / 2, canvas.height - 60);
+        ctx.fillText('demotivations.kristof.pro', canvas.width / 2, canvas.height - 60);
 
         // Convert canvas to blob
         canvas.toBlob((blob) => {

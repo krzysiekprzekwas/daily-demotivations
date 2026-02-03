@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
               color: 'rgba(255, 255, 255, 0.5)',
             }}
           >
-            dailydemotivations.com
+            demotivations.kristof.pro
           </div>
         </div>
       ),
