@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// Quotes table - stores all demotivational quotes
+model Quote {
+  id        String   @id @default(cuid())
+  text      String   @db.Text
+  author    String?  @db.VarChar(255)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  pairings  Pairing[]
+  
+  // Indexes for performance
+  @@index([active])
+  @@index([createdAt(sort: Desc)])
+  @@map("quotes")
+}
+
+// Images table - stores landscape image URLs with attribution
+model Image {
+  id               String   @id @default(cuid())
+  url              String   @db.Text
+  photographerName String   @map("photographer_name") @db.VarChar(255)
+  photographerUrl  String?  @map("photographer_url") @db.Text
+  source           String   @default("unsplash") @db.VarChar(50)
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  pairings         Pairing[]
+  
+  // Indexes
+  @@index([active])
+  @@index([source])
+  @@map("images")
+}
+
+// Pairings table - assigns quote + image to specific date
+model Pairing {
+  id        String   @id @default(cuid())
+  quoteId   String   @map("quote_id")
+  imageId   String   @map("image_id")
+  date      DateTime @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  
+  // Constraints
+  @@unique([date])
+  @@index([quoteId])
+  @@index([imageId])
+  @@index([date(sort: Desc)])
+  @@map("pairings")
+}

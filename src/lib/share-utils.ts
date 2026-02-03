@@ -2,6 +2,8 @@
  * Utility functions for social media sharing
  */
 
+import { track } from '@vercel/analytics';
+
 /**
  * Get the current page URL (works in browser only)
  */
@@ -146,6 +148,9 @@ export async function downloadImage(quote: string, onSuccess: () => void, onErro
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
     
+    // Track download event
+    track('quote_downloaded', { date: new Date().toISOString().split('T')[0] });
+    
     onSuccess();
   } catch (error) {
     console.error('Download error:', error);
@@ -187,6 +192,9 @@ export async function shareImage(quote: string, onSuccess: () => void, onError: 
       text: `"${quote}"`,
       files: [file],
     });
+
+    // Track share event
+    track('quote_shared', { date: new Date().toISOString().split('T')[0] });
 
     onSuccess();
   } catch (error: any) {

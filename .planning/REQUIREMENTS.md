@@ -33,35 +33,75 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ## v2 Requirements
 
-Deferred to future release. Tracked but not in current roadmap.
+**Focus:** Content management, monetization preparation, enhanced sharing formats
 
-### Content Management
+### Content Management (Priority 1)
 
-- **CONTENT-03**: Admin CMS interface for managing quotes without code deployments
-- **CONTENT-04**: User submission system for community-contributed quotes
-- **CONTENT-05**: Moderation queue for reviewing submitted quotes before publication
+- **CMS-01**: Admin interface for managing quotes (CRUD operations: add, edit, deactivate)
+- **CMS-02**: Admin interface for managing background images (add via URL, with photographer attribution, deactivate)
+- **CMS-03**: Quote-to-image pairing system (manually pair specific quotes with images for specific dates)
+- **CMS-04**: Database migration from hardcoded arrays to persistent storage
+- **CMS-05**: Admin authentication via simple password/secret key (single admin, environment variable)
+- **CMS-06**: Admin dashboard shows upcoming scheduled pairings (simple list/table view)
+- **CMS-07**: Pairing validation prevents quote repetition within 5-day rolling window
+- **CMS-08**: Image URL field hints/suggests Unsplash URLs (helper text or placeholder)
 
-### Discovery & Navigation
+### Historical Access (Priority 2 - Monetization Preparation)
 
-- **NAV-01**: Historical calendar view to browse past quotes
-- **NAV-02**: Previous/next navigation to see adjacent days' quotes
-- **NAV-03**: Permalink to specific dates (e.g., /quote/2025-01-15)
+- **HISTORY-01**: View quotes from 5 days back (unauthenticated users, configurable via environment variable)
+- **HISTORY-02**: Previous/next day navigation buttons (disabled when reaching limits)
+- **HISTORY-03**: Simple dropdown or prev/next navigation for selecting past days (within 5-day window)
+- **HISTORY-04**: URL structure supports date parameter (e.g., /?date=2025-01-15)
+- **HISTORY-05**: Clear messaging about historical access limits (inline badge or subtle banner)
+- **HISTORY-06**: Date indicator shows which day user is viewing ("January 14, 2025 · 2 days ago")
+- **HISTORY-07**: "Today" button for quick return to current quote
 
-### Social Optimization
+### Enhanced Sharing Formats (Priority 3)
 
-- **SHARE-05**: Platform-specific image formats (LinkedIn 1200x627, IG Story 1080x1920, FB 1080x1080)
-- **SHARE-06**: Social media analytics tracking (which quotes are most shared)
+- **SHARE-05**: User can choose format before download/share: Landscape (1920x1080), Square (1200x1200), or Vertical/Story (1080x1920)
+- **SHARE-06**: Format picker modal or dropdown UI component
+- **SHARE-07**: All three formats properly compose quote + image + attribution
+- **SHARE-08**: Format selection persists for session (remember user preference)
 
-### Performance
+### Technical Infrastructure
 
-- **PERF-01**: Edge caching with 24-hour TTL for optimal performance
-- **PERF-02**: Cache warming strategy to prevent midnight stampede
+- **DB-01**: Database setup (PostgreSQL - Vercel Postgres recommended)
+- **DB-02**: Schema for quotes table (id, text, author, active, created_at, updated_at)
+- **DB-03**: Schema for images table (id, url, photographer_name, photographer_url, source, active, created_at)
+- **DB-04**: Schema for pairings table (id, quote_id, image_id, date, created_at)
+- **AUTH-01**: Simple password-based admin authentication (environment variable, no user table needed)
+- **AUTH-02**: Protected admin routes (/admin/*) via middleware
 
-### User Engagement
+### Data Management & Validation
 
+- **DATA-01**: Prevent duplicate quotes when adding new quotes (check text similarity)
+- **DATA-02**: Validate image URLs are accessible before saving (optional HTTP HEAD request)
+- **DATA-03**: Graceful fallback to hardcoded quotes if database unavailable (reliability)
+- **DATA-04**: Graceful fallback to Unsplash random search if paired image URL broken
+
+### SEO & Social Sharing
+
+- **SEO-01**: Historical pages include noindex meta tag and canonical pointing to today
+- **SHARE-09**: OG image route supports date parameter for historical quotes (/api/og?date=2025-01-14)
+
+### Error Handling
+
+- **ERROR-01**: Admin UI displays validation errors clearly (simple text messages, no fancy UX needed)
+- **ERROR-02**: Frontend displays friendly error if quote/image loading fails
+
+### Analytics (Priority 4)
+
+- **ANALYTICS-01**: Install and configure @vercel/analytics for basic page view tracking
+- **ANALYTICS-02**: Track custom events for share/download actions (optional, can use Web Vitals only)
+
+### Deferred to v3 (Advanced Features)
+
+- **ANALYTICS-03**: Quote performance metrics dashboard in admin
 - **USER-01**: Optional user accounts to save favorite quotes
 - **USER-02**: Daily visit streak tracking
 - **USER-03**: Email/notification opt-in for daily quote reminders
+- **CONTENT-04**: User submission system for community-contributed quotes
+- **CONTENT-05**: Moderation queue for reviewing submitted quotes
 
 ## Out of Scope
 

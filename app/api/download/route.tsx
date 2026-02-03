@@ -1,15 +1,19 @@
-import { getTodaysQuote } from '@/lib/quotes';
-import { getRandomLandscape } from '@/lib/unsplash';
+import { getTodaysContent } from '@/lib/quotes-db';
 import { format } from 'date-fns';
 
-export const runtime = 'edge';
+// Use Node.js runtime instead of Edge to avoid 1MB size limit
+export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const quote = getTodaysQuote();
-    const landscape = await getRandomLandscape();
+    const content = await getTodaysContent();
     const today = format(new Date(), 'MMMM d, yyyy');
     const filename = `demotivation-${format(new Date(), 'yyyy-MM-dd')}.png`;
+
+    // Format quote text
+    const quoteText = content.quote.author
+      ? `${content.quote.text}\n— ${content.quote.author}`
+      : content.quote.text;
 
     // We need to use canvas-based composition since ImageResponse doesn't handle external images well
     // For now, let's create a client-side download that fetches and composites the image
@@ -17,11 +21,11 @@ export async function GET() {
     
     return new Response(
       JSON.stringify({
-        quote,
+        quote: quoteText,
         today,
-        imageUrl: landscape.url,
-        photographer: landscape.photographer,
-        photographerUrl: landscape.photographerUrl,
+        imageUrl: content.image.url,
+        photographer: content.image.photographerName,
+        photographerUrl: content.image.photographerUrl || undefined,
       }),
       {
         headers: {

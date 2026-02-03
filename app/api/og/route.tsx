@@ -1,9 +1,11 @@
 import { ImageResponse } from 'next/og';
-import { getTodaysQuote } from '@/lib/quotes';
+import { getTodaysContent } from '@/lib/quotes-db';
 import { format, parse, isValid } from 'date-fns';
 import { NextRequest } from 'next/server';
 
-export const runtime = 'edge';
+// Use Node.js runtime instead of Edge to avoid 1MB size limit
+// Edge runtime has 1MB limit on free plan, Node.js has 50MB limit
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,18 +14,22 @@ export async function GET(request: NextRequest) {
     const dateParam = searchParams.get('date');
     
     let targetDate = new Date();
-    let quote = getTodaysQuote();
     
     // If date parameter provided, use it (format: YYYY-MM-DD)
     if (dateParam) {
       const parsedDate = parse(dateParam, 'yyyy-MM-dd', new Date());
       if (isValid(parsedDate)) {
         targetDate = parsedDate;
-        // For now, still use today's quote since we don't have date-specific quotes yet
-        // This will be enhanced when permalink feature is implemented
-        quote = getTodaysQuote();
       }
     }
+    
+    // Fetch content (uses database if USE_DATABASE=true, otherwise hardcoded)
+    const content = await getTodaysContent();
+    
+    // Format quote text
+    const quoteText = content.quote.author
+      ? `${content.quote.text} — ${content.quote.author}`
+      : content.quote.text;
     
     const formattedDate = format(targetDate, 'MMMM d, yyyy');
 
@@ -71,7 +77,7 @@ export async function GET(request: NextRequest) {
               fontFamily: 'serif',
             }}
           >
-            "{quote}"
+            "{quoteText}"
           </div>
 
           {/* Attribution */}

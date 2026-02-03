@@ -1,23 +1,27 @@
 # Project State: Daily Demotivations
 
 **Last Updated:** 2026-02-03  
-**Current Phase:** Phase 2 (Social Sharing & Virality)  
-**Status:** Phase 2 Complete ✅
+**Current Phase:** v2 Planning & Phase 4 (Analytics)  
+**Status:** v1 Complete ✅, Analytics Implemented ✅, v2 Planning Complete ✅
 
 ## Current State
 
-**Phase:** Phase 2 - Social Sharing & Virality  
-**Stage:** Complete  
-**Progress:** 100% (3/3 plans executed and verified)
+**Version:** v1 Complete, v2 Phase 4 (Analytics) Complete  
+**Stage:** Ready to begin v2 Phase 1 (CMS)  
+**Progress:** v1 12/12 requirements complete, Analytics 2/2 requirements complete
 
 ### Active Work
 
-**Phase 2 Complete:**
+**v2 Phase 4 Complete (Analytics):**
+- [x] ANALYTICS-01: Vercel Analytics installed and configured — Complete
+- [x] ANALYTICS-02: Custom event tracking (quote_downloaded, quote_shared) — Complete
+
+**v1 Phase 2 Complete:**
 - [x] Plan 01: Download Functionality (SHARE-01) — Complete
 - [x] Plan 02: Web Share API & Share Buttons (SHARE-02, SHARE-04) — Complete  
 - [x] Plan 03: OG Image Enhancements (SHARE-03) — Complete
 
-**Phase 1 Complete:**
+**v1 Phase 1 Complete:**
 - [x] Plan 01: Next.js project initialization — Complete
 - [x] Plan 02: Quote collection with deterministic selection — Complete
 - [x] Plan 03: Unsplash API integration — Complete
@@ -31,6 +35,13 @@ None currently blocked.
 
 ### Recent Decisions
 
+- **2026-02-03:** v2 Phase 4 (Analytics) implemented - Vercel Analytics with custom events
+- **2026-02-03:** Analytics tracks quote_downloaded and quote_shared events with date metadata
+- **2026-02-03:** v2 requirements finalized (33 requirements across 4 phases)
+- **2026-02-03:** Admin auth simplified to single password (no NextAuth.js, environment variable)
+- **2026-02-03:** CMS-07 added: 5-day rolling window validation prevents quote repetition
+- **2026-02-03:** Historical access set to 5 days back (configurable via environment variable)
+- **2026-02-03:** v1 Phase 3 (Polish) deferred to v3 per user request
 - **2026-02-03:** Phase 2 verified complete - all 4 requirements met (SHARE-01 through SHARE-04)
 - **2026-02-03:** Instagram deviation accepted: Web Share API + download provides better UX than direct button
 - **2026-02-03:** react-icons library added for social platform icons (Facebook, Twitter, LinkedIn)
