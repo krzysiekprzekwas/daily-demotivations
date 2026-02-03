@@ -8,6 +8,7 @@ import {
 } from './actions';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
+import DeleteButton from '@/components/DeleteButton';
 
 /**
  * Admin Images Management Page
@@ -312,8 +313,9 @@ export default async function ImagesPage({
                           </form>
 
                           {/* Delete Button */}
-                          <form
-                            action={async () => {
+                          <DeleteButton
+                            itemName={image.photographerName || 'Unknown'}
+                            onDelete={async () => {
                               'use server';
                               const result = await deleteImage(image.id);
                               if (result.success) {
@@ -326,23 +328,7 @@ export default async function ImagesPage({
                                 );
                               }
                             }}
-                            onSubmit={(e) => {
-                              if (
-                                !confirm(
-                                  `Delete image from ${image.photographerName || 'Unknown'}?`
-                                )
-                              ) {
-                                e.preventDefault();
-                              }
-                            }}
-                          >
-                            <button
-                              type="submit"
-                              className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded transition"
-                            >
-                              Delete
-                            </button>
-                          </form>
+                          />
                         </div>
                       </div>
                     </div>

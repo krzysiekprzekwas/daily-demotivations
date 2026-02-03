@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { createPairing, deletePairing } from './actions';
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
+import DeleteButton from '@/components/DeleteButton';
 
 /**
  * Admin Pairings Management Page
@@ -314,8 +315,9 @@ export default async function PairingsPage({
 
                       {/* Actions */}
                       <div className="flex-shrink-0">
-                        <form
-                          action={async () => {
+                        <DeleteButton
+                          itemName={`pairing for ${pairingDate.toLocaleDateString()}`}
+                          onDelete={async () => {
                             'use server';
                             const result = await deletePairing(pairing.id);
                             if (result.success) {
@@ -328,23 +330,7 @@ export default async function PairingsPage({
                               );
                             }
                           }}
-                          onSubmit={(e) => {
-                            if (
-                              !confirm(
-                                `Delete pairing for ${pairingDate.toLocaleDateString()}?`
-                              )
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                        >
-                          <button
-                            type="submit"
-                            className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded transition"
-                          >
-                            Delete
-                          </button>
-                        </form>
+                        />
                       </div>
                     </div>
                   </div>

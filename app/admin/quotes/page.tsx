@@ -7,6 +7,7 @@ import {
   toggleQuoteActive,
 } from './actions';
 import { redirect } from 'next/navigation';
+import DeleteButton from '@/components/DeleteButton';
 
 /**
  * Admin Quotes Management Page
@@ -241,8 +242,9 @@ export default async function QuotesPage({
                       </form>
 
                       {/* Delete Button */}
-                      <form
-                        action={async () => {
+                      <DeleteButton
+                        itemName={quote.text}
+                        onDelete={async () => {
                           'use server';
                           const result = await deleteQuote(quote.id);
                           if (result.success) {
@@ -255,23 +257,7 @@ export default async function QuotesPage({
                             );
                           }
                         }}
-                        onSubmit={(e) => {
-                          if (
-                            !confirm(
-                              `Delete quote: "${quote.text.substring(0, 50)}..."?`
-                            )
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      >
-                        <button
-                          type="submit"
-                          className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded transition"
-                        >
-                          Delete
-                        </button>
-                      </form>
+                      />
                     </div>
                   </div>
                 </div>
