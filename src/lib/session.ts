@@ -79,6 +79,8 @@ export async function isAuthenticated(): Promise<boolean> {
  * Require authentication - throws error if not logged in
  * Use in Server Actions and Server Components that need auth
  * 
+ * Also refreshes session timestamp (sliding expiration)
+ * 
  * @throws Error if not authenticated
  */
 export async function requireAuth() {
@@ -87,4 +89,10 @@ export async function requireAuth() {
   if (!authenticated) {
     throw new Error('Unauthorized - Please log in');
   }
+  
+  // Refresh session timestamp for sliding expiration
+  // This extends the session every time an admin action is performed
+  const session = await getSession();
+  session.loginTime = Date.now();
+  await session.save();
 }
