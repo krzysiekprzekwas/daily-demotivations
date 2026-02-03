@@ -41,7 +41,7 @@ export default function Footer({ photographer, photographerUrl }: FooterProps) {
           </a>
           <span className="text-white/40">•</span>
           <a 
-            href="https://buymeacoffee.com/kristofpro"
+            href="https://buymeacoffee.com/kristof.pro"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white/90 transition-colors underline"
