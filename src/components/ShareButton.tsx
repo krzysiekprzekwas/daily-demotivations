@@ -1,257 +1,136 @@
 'use client';
 
 import { useState } from 'react';
-import { FaFacebook, FaTwitter, FaLinkedin, FaShareAlt } from 'react-icons/fa';
-import { getShareText, getCurrentUrl } from '@/lib/share-utils';
+import { FiShare2, FiDownload } from 'react-icons/fi';
+import { FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
+import ShareModal from './ShareModal';
+import ShareAction from './ShareAction';
+import Toast from './Toast';
+import { 
+  downloadImage, 
+  shareToInstagram, 
+  shareToWhatsApp, 
+  shareToLinkedIn,
+  getCurrentUrl 
+} from '@/lib/share-utils';
 
 interface ShareButtonProps {
   quote: string;
 }
 
 export default function ShareButton({ quote }: ShareButtonProps) {
-  const [isSharing, setIsSharing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showFallback, setShowFallback] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [isToastVisible, setIsToastVisible] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  // Check if Web Share API is supported
-  const isWebShareSupported = typeof navigator !== 'undefined' && 
-    'share' in navigator && 
-    'canShare' in navigator;
-
-  const handleWebShare = async () => {
-    try {
-      setIsSharing(true);
-      setError(null);
-
-      const shareUrl = getCurrentUrl();
-      const shareText = getShareText(quote, 'generic');
-
-      // Try to fetch and share the image (Web Share Level 2)
-      try {
-        const response = await fetch('/api/download');
-        if (response.ok) {
-          const blob = await response.blob();
-          const file = new File([blob], `demotivation-${new Date().toISOString().split('T')[0]}.png`, { 
-            type: 'image/png' 
-          });
-
-          // Check if we can share with files
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              title: 'Daily Demotivations',
-              text: shareText,
-              url: shareUrl,
-              files: [file],
-            });
-            return;
-          }
-        }
-      } catch (fileError) {
-        // If file sharing fails, continue with text/url only
-        console.log('File sharing not available, falling back to text/url');
-      }
-
-      // Fallback to text + URL only (Web Share Level 1)
-      await navigator.share({
-        title: 'Daily Demotivations',
-        text: shareText,
-        url: shareUrl,
-      });
-    } catch (err) {
-      // User cancelled or error occurred
-      if ((err as Error).name === 'AbortError') {
-        // User cancelled, don't show error
-        console.log('Share cancelled by user');
-      } else {
-        console.error('Share error:', err);
-        setError('Failed to share. Please try again.');
-        // Show fallback buttons on error
-        setShowFallback(true);
-      }
-    } finally {
-      setIsSharing(false);
-    }
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setIsToastVisible(true);
   };
 
-  const handleDirectShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
-    const shareUrl = getCurrentUrl();
-    const shareText = getShareText(quote, platform);
-    
-    let url = '';
-    
-    switch (platform) {
-      case 'facebook':
-        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-        break;
-      case 'twitter':
-        url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-        break;
-      case 'linkedin':
-        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-        break;
-    }
-    
-    // Open in new window
-    window.open(url, '_blank', 'width=600,height=400,noopener,noreferrer');
-  };
-
-  // If Web Share API is not supported or user requested fallback, show direct share buttons
-  if (!isWebShareSupported || showFallback) {
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex gap-3">
-          {/* Facebook */}
-          <button
-            onClick={() => handleDirectShare('facebook')}
-            className="
-              group
-              p-3
-              bg-[#1877F2]/10 hover:bg-[#1877F2]/20
-              backdrop-blur-sm
-              border border-[#1877F2]/30 hover:border-[#1877F2]/50
-              rounded-lg
-              text-[#1877F2]
-              transition-all duration-200
-              focus:outline-none focus:ring-2 focus:ring-[#1877F2]/50 focus:ring-offset-2 focus:ring-offset-transparent
-              shadow-lg hover:shadow-xl
-            "
-            aria-label="Share on Facebook"
-            title="Share on Facebook"
-          >
-            <FaFacebook className="w-5 h-5" />
-          </button>
-
-          {/* Twitter */}
-          <button
-            onClick={() => handleDirectShare('twitter')}
-            className="
-              group
-              p-3
-              bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20
-              backdrop-blur-sm
-              border border-[#1DA1F2]/30 hover:border-[#1DA1F2]/50
-              rounded-lg
-              text-[#1DA1F2]
-              transition-all duration-200
-              focus:outline-none focus:ring-2 focus:ring-[#1DA1F2]/50 focus:ring-offset-2 focus:ring-offset-transparent
-              shadow-lg hover:shadow-xl
-            "
-            aria-label="Share on Twitter"
-            title="Share on Twitter"
-          >
-            <FaTwitter className="w-5 h-5" />
-          </button>
-
-          {/* LinkedIn */}
-          <button
-            onClick={() => handleDirectShare('linkedin')}
-            className="
-              group
-              p-3
-              bg-[#0A66C2]/10 hover:bg-[#0A66C2]/20
-              backdrop-blur-sm
-              border border-[#0A66C2]/30 hover:border-[#0A66C2]/50
-              rounded-lg
-              text-[#0A66C2]
-              transition-all duration-200
-              focus:outline-none focus:ring-2 focus:ring-[#0A66C2]/50 focus:ring-offset-2 focus:ring-offset-transparent
-              shadow-lg hover:shadow-xl
-            "
-            aria-label="Share on LinkedIn"
-            title="Share on LinkedIn"
-          >
-            <FaLinkedin className="w-5 h-5" />
-          </button>
-        </div>
-
-        {showFallback && (
-          <button
-            onClick={() => setShowFallback(false)}
-            className="text-white/60 text-sm hover:text-white/80 transition-colors"
-          >
-            Back to native share
-          </button>
-        )}
-      </div>
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    await downloadImage(
+      quote,
+      () => {
+        showToast('Image downloaded!');
+        setIsDownloading(false);
+      },
+      (error) => {
+        showToast(error);
+        setIsDownloading(false);
+      }
     );
-  }
+  };
 
-  // Show Web Share API button
+  const handleInstagram = () => {
+    shareToInstagram(() => {
+      showToast('Opening Instagram...');
+      setIsModalOpen(false);
+    });
+  };
+
+  const handleWhatsApp = () => {
+    const url = getCurrentUrl();
+    shareToWhatsApp(quote, url, () => {
+      showToast('Opening WhatsApp...');
+      setIsModalOpen(false);
+    });
+  };
+
+  const handleLinkedIn = () => {
+    const url = getCurrentUrl();
+    shareToLinkedIn(url, () => {
+      showToast('Opening LinkedIn...');
+      setIsModalOpen(false);
+    });
+  };
+
   return (
-    <div className="flex flex-col items-center gap-2">
+    <>
+      {/* Share trigger button */}
       <button
-        onClick={handleWebShare}
-        disabled={isSharing}
+        onClick={() => setIsModalOpen(true)}
         className="
-          group
-          relative
-          px-8 py-3
+          px-6 py-3
           bg-white/10 hover:bg-white/20
-          backdrop-blur-sm
-          border border-white/30 hover:border-white/50
-          rounded-lg
-          text-white
-          font-medium
+          border border-white/20 hover:border-white/30
+          rounded-full
+          text-white font-medium
           transition-all duration-200
-          disabled:opacity-50 disabled:cursor-not-allowed
-          focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent
+          hover:scale-105 active:scale-95
+          backdrop-blur-sm
           shadow-lg hover:shadow-xl
+          flex items-center gap-2
         "
-        aria-label="Share today's demotivation"
       >
-        <span className="flex items-center gap-2">
-          {isSharing ? (
-            <>
-              {/* Loading spinner */}
-              <svg 
-                className="animate-spin h-5 w-5" 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle 
-                  className="opacity-25" 
-                  cx="12" 
-                  cy="12" 
-                  r="10" 
-                  stroke="currentColor" 
-                  strokeWidth="4"
-                />
-                <path 
-                  className="opacity-75" 
-                  fill="currentColor" 
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              <span>Preparing...</span>
-            </>
-          ) : (
-            <>
-              {/* Share icon */}
-              <FaShareAlt className="w-5 h-5" aria-hidden="true" />
-              <span>Share</span>
-            </>
-          )}
-        </span>
+        <FiShare2 className="w-5 h-5" />
+        <span>Share</span>
       </button>
-      
-      {/* Error message */}
-      {error && (
-        <p className="text-red-300 text-sm" role="alert">
-          {error}
-        </p>
-      )}
 
-      {/* Option to show direct share buttons */}
-      {!showFallback && (
-        <button
-          onClick={() => setShowFallback(true)}
-          className="text-white/50 text-xs hover:text-white/70 transition-colors underline"
-        >
-          or share directly
-        </button>
-      )}
-    </div>
+      {/* Share modal */}
+      <ShareModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="space-y-4">
+          <p className="text-white/60 text-sm text-center">
+            Share this demotivation:
+          </p>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <ShareAction
+              icon={<FiDownload className="w-10 h-10" />}
+              label="Download"
+              onClick={handleDownload}
+              disabled={isDownloading}
+            />
+            
+            <ShareAction
+              icon={<FaInstagram className="w-10 h-10" />}
+              label="Instagram"
+              onClick={handleInstagram}
+            />
+            
+            <ShareAction
+              icon={<FaWhatsapp className="w-10 h-10" />}
+              label="WhatsApp"
+              onClick={handleWhatsApp}
+            />
+            
+            <ShareAction
+              icon={<FaLinkedin className="w-10 h-10" />}
+              label="LinkedIn"
+              onClick={handleLinkedIn}
+            />
+          </div>
+        </div>
+      </ShareModal>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        isVisible={isToastVisible}
+        onClose={() => setIsToastVisible(false)}
+      />
+    </>
   );
 }
