@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import DownloadButton from './DownloadButton';
+import ShareButton from './ShareButton';
 
 interface QuoteDisplayProps {
   quote: string;
@@ -34,9 +35,10 @@ export default function QuoteDisplay({ quote }: QuoteDisplayProps) {
         "{quote}"
       </blockquote>
       
-      {/* Download button */}
-      <div className="pt-4">
+      {/* Action buttons */}
+      <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
         <DownloadButton />
+        <ShareButton quote={quote} />
       </div>
       
       {/* Breathing room for zen aesthetic */}
