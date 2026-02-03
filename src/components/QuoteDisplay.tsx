@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import DownloadButton from './DownloadButton';
 
 interface QuoteDisplayProps {
   quote: string;
@@ -33,8 +34,13 @@ export default function QuoteDisplay({ quote }: QuoteDisplayProps) {
         "{quote}"
       </blockquote>
       
+      {/* Download button */}
+      <div className="pt-4">
+        <DownloadButton />
+      </div>
+      
       {/* Breathing room for zen aesthetic */}
-      <div className="h-12" aria-hidden="true" />
+      <div className="h-8" aria-hidden="true" />
     </div>
   );
 }
