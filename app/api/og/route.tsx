@@ -3,7 +3,9 @@ import { getTodaysContent } from '@/lib/quotes-db';
 import { format, parse, isValid } from 'date-fns';
 import { NextRequest } from 'next/server';
 
-export const runtime = 'edge';
+// Use Node.js runtime instead of Edge to avoid 1MB size limit
+// Edge runtime has 1MB limit on free plan, Node.js has 50MB limit
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
