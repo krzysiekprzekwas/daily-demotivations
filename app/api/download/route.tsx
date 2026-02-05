@@ -28,10 +28,10 @@ export async function GET() {
         photographerUrl: content.image.photographerUrl || undefined,
       }),
       {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=86400',
-        },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300, s-maxage=300', // 5 min cache for fresh daily content
+      },
       }
     );
   } catch (error) {

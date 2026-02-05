@@ -4,9 +4,10 @@ import QuoteDisplay from '@/components/QuoteDisplay';
 import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
-// ISR: Regenerate page every 24 hours (86400 seconds)
-// This prevents midnight cache stampede via stale-while-revalidate
-export const revalidate = 86400;
+// Force dynamic rendering to ensure fresh date on every request
+// This is necessary because the page content changes based on current date
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getTodaysContent();

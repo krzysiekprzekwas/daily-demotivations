@@ -100,12 +100,12 @@ export async function GET(request: NextRequest) {
       },
     );
     
-    // Set aggressive cache headers
+    // Set cache headers
     // If date parameter is provided, cache immutably (permalink)
-    // Otherwise, cache for 24 hours (current day)
+    // Otherwise, short cache to ensure fresh daily content (5 minutes)
     const cacheControl = dateParam
       ? 'public, max-age=31536000, immutable' // 1 year, immutable for permalinks
-      : 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=43200'; // 24h cache, 12h stale
+      : 'public, max-age=300, s-maxage=300, stale-while-revalidate=60'; // 5min cache, 1min stale
     
     return new Response(imageResponse.body, {
       headers: {
