@@ -4,10 +4,9 @@ import QuoteDisplay from '@/components/QuoteDisplay';
 import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
-// Force dynamic rendering to ensure fresh date on every request
-// This is necessary because the page content changes based on current date
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Revalidate every hour for better caching while keeping content fresh
+// Content changes daily, so 1-hour cache is reasonable
+export const revalidate = 3600; // 1 hour in seconds
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getTodaysContent();
@@ -18,6 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Daily Demotivations',
     description: quoteText,
+    alternates: {
+      canonical: '/',
+    },
     openGraph: {
       title: 'Daily Demotivations',
       description: quoteText,

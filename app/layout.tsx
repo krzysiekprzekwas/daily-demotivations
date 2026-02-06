@@ -32,6 +32,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={playfair.variable}>
+      <head>
+        {/* Preconnect to external domains for faster resource loading */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+      </head>
       <body className="antialiased">
         {children}
         <Analytics />

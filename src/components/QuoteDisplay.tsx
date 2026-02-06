@@ -11,6 +11,11 @@ export default function QuoteDisplay({ quote }: QuoteDisplayProps) {
   
   return (
     <div className="max-w-4xl mx-auto text-center space-y-8">
+      {/* Hidden H1 for SEO - visually hidden but accessible */}
+      <h1 className="sr-only">
+        Daily Demotivational Quote - {formattedDate}
+      </h1>
+      
       {/* Date indicator (muted, subtle) */}
       <time 
         dateTime={today.toISOString()}
