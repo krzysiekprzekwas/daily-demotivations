@@ -7,8 +7,21 @@ const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_KEY || '',
 });
 
+const LANDSCAPE_QUERIES = [
+  'dramatic mountain landscape',
+  'rocky coastline ocean waves',
+  'misty forest nature',
+  'city skyline golden hour',
+  'river valley aerial',
+  'desert canyon landscape',
+  'northern lights aurora',
+  'tropical beach paradise',
+  'winter snow landscape',
+  'rolling hills countryside',
+];
+
 /**
- * Fetches a random romantic landscape from Unsplash
+ * Fetches a random landscape from Unsplash
  * Cached via page-level ISR (revalidate = 86400) in page.tsx
  * Falls back to local images if API fails or rate limited
  */
@@ -20,18 +33,18 @@ export async function getRandomLandscape(): Promise<LandscapePhoto> {
   }
 
   try {
+    const query = LANDSCAPE_QUERIES[Math.floor(Math.random() * LANDSCAPE_QUERIES.length)];
     const result = await unsplash.photos.getRandom({
-      query: 'romantic landscape sunset mountains',
+      query,
       orientation: 'landscape',
       contentFilter: 'high',
     });
 
     if (result.type === 'success') {
       const photo = Array.isArray(result.response) ? result.response[0] : result.response;
-      
-      // CRITICAL: Preserve ixid parameter (Pitfall #3 from research)
-      // Never reconstruct URLs - always use API response URLs directly
-      const url = photo.urls.regular; // Already includes ixid
+
+      // Use raw URL with explicit sizing for full HD quality on all displays
+      const url = `${photo.urls.raw}&w=1920&q=90&fit=crop&auto=format`;
       
       return {
         url,
