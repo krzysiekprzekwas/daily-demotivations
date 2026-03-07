@@ -11,8 +11,11 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Daily Demotivations',
-  description: 'Your daily dose of demotivating quotes on beautiful landscapes',
+  title: {
+    default: 'Daily Demotivations | Funny Demotivational Quotes',
+    template: '%s | Daily Demotivations',
+  },
+  description: 'A fresh demotivational quote paired with a stunning landscape photo, updated every day. Start your day with a healthy dose of humbling wisdom.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   openGraph: {
     type: 'website',

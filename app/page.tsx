@@ -10,19 +10,27 @@ export const revalidate = 3600; // 1 hour in seconds
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getTodaysContent();
-  const quoteText = content.quote.author 
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const pageTitle = `Daily Demotivational Quote – ${formattedDate}`;
+
+  const quoteText = content.quote.author
     ? `${content.quote.text} — ${content.quote.author}`
     : content.quote.text;
-  
+  const shortQuote = content.quote.text.length > 110
+    ? content.quote.text.slice(0, 107) + '...'
+    : content.quote.text;
+  const description = `"${shortQuote}" — Fresh demotivational quotes on stunning landscapes, delivered daily.`;
+
   return {
-    title: 'Daily Demotivations',
-    description: quoteText,
+    title: pageTitle,
+    description,
     alternates: {
       canonical: '/',
     },
     openGraph: {
-      title: 'Daily Demotivations',
-      description: quoteText,
+      title: pageTitle,
+      description,
       url: '/',
       images: [
         {
@@ -37,8 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Daily Demotivations',
-      description: quoteText,
+      title: pageTitle,
+      description,
       images: ['/api/og'],
     },
   };
@@ -46,17 +54,30 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const content = await getTodaysContent();
-  
+
   // Prepare quote for display component (expects string format)
   const quoteText = content.quote.author
     ? `${content.quote.text}\n— ${content.quote.author}`
     : content.quote.text;
-  
-  // Note: We don't trigger Unsplash download tracking for database images
-  // Only trigger if using Unsplash random API (which provides downloadUrl)
-  
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Daily Demotivations',
+    url: process.env.NEXT_PUBLIC_BASE_URL || 'https://demotivations.kristof.pro',
+    mainEntity: {
+      '@type': 'Quotation',
+      text: content.quote.text,
+      ...(content.quote.author ? { creator: { '@type': 'Person', name: content.quote.author } } : {}),
+    },
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Background landscape with darkening overlay */}
       <div 
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
