@@ -1,6 +1,7 @@
 import { prisma } from './prisma';
 import { getTodaysQuote } from './quotes';
 import { getRandomLandscape } from './unsplash';
+import { schedulePairing } from './scheduler';
 
 /**
  * Database query functions for fetching quotes and images
@@ -26,7 +27,7 @@ export interface DailyContent {
 
 /**
  * Get quote and image for a specific date from database
- * Falls back to hardcoded quotes + Unsplash if no pairing exists
+ * If no pairing exists yet, one is auto-scheduled and persisted on first request
  * 
  * @param date - Date in YYYY-MM-DD format (e.g., "2026-02-03")
  * @returns Quote and image data, or null if error
@@ -41,14 +42,17 @@ export async function getQuoteForDate(dateString: string): Promise<DailyContent 
       return null;
     }
 
-    // Query database for pairing on this date
-    const pairing = await prisma.pairing.findUnique({
-      where: { date },
-      include: {
-        quote: true,
-        image: true,
-      },
-    });
+    const findPairing = () =>
+      prisma.pairing.findUnique({
+        where: { date },
+        include: { quote: true, image: true },
+      });
+
+    // No pairing yet → schedule one now; on a concurrent insert, read the winner's
+    const pairing =
+      (await findPairing()) ??
+      (await schedulePairing(date))?.pairing ??
+      (await findPairing());
 
     if (pairing) {
       // Found a pairing in database
@@ -66,7 +70,7 @@ export async function getQuoteForDate(dateString: string): Promise<DailyContent 
       };
     }
 
-    // No pairing found, return null (caller will handle fallback)
+    // No active quotes available, return null (caller will handle fallback)
     return null;
   } catch (error) {
     console.error('[quotes-db] Error fetching quote for date:', dateString, error);

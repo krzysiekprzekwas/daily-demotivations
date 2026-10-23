@@ -2,7 +2,7 @@
 
 import { requireAuth } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
-import { getRandomLandscape } from '@/lib/unsplash';
+import { schedulePairing } from '@/lib/scheduler';
 import { revalidatePath } from 'next/cache';
 
 export type AutoScheduleResult = {
@@ -16,99 +16,6 @@ export type AutoScheduleResult = {
     newImagesCreated: number;
   };
 };
-
-/**
- * Smart quote selection algorithm:
- * 1. Prioritize quotes that have NEVER been used
- * 2. For quotes that have been used, select the one used LONGEST ago
- * 3. Exclude quotes used in the past 5 days (to maintain quality)
- */
-async function selectNextQuote(
-  targetDate: Date,
-  usedQuoteIds: Set<string>
-): Promise<string | null> {
-  // Get all active quotes
-  const allQuotes = await prisma.quote.findMany({
-    where: { active: true },
-    select: { id: true },
-  });
-
-  if (allQuotes.length === 0) {
-    return null;
-  }
-
-  // Calculate 5 days before target date for exclusion window
-  const fiveDaysAgo = new Date(targetDate);
-  fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-
-  // Get quotes used within 5 days before target date (to exclude)
-  const recentlyUsedPairings = await prisma.pairing.findMany({
-    where: {
-      date: {
-        gte: fiveDaysAgo,
-        lt: targetDate,
-      },
-    },
-    select: { quoteId: true },
-  });
-
-  const recentlyUsedQuoteIds = new Set(recentlyUsedPairings.map((p) => p.quoteId));
-
-  // Get all quotes with their most recent usage date (if any)
-  const quotesWithUsage = await Promise.all(
-    allQuotes.map(async (quote) => {
-      // Skip if recently used or already used in this batch
-      if (recentlyUsedQuoteIds.has(quote.id) || usedQuoteIds.has(quote.id)) {
-        return null;
-      }
-
-      // Find most recent pairing for this quote
-      const mostRecentPairing = await prisma.pairing.findFirst({
-        where: { quoteId: quote.id },
-        orderBy: { date: 'desc' },
-        select: { date: true },
-      });
-
-      return {
-        id: quote.id,
-        lastUsedDate: mostRecentPairing?.date || null,
-      };
-    })
-  );
-
-  // Filter out nulls and categorize
-  const availableQuotes = quotesWithUsage.filter((q) => q !== null) as {
-    id: string;
-    lastUsedDate: Date | null;
-  }[];
-
-  if (availableQuotes.length === 0) {
-    return null;
-  }
-
-  // Separate never-used from previously-used quotes
-  const neverUsed = availableQuotes.filter((q) => q.lastUsedDate === null);
-  const previouslyUsed = availableQuotes.filter((q) => q.lastUsedDate !== null);
-
-  // Prioritize never-used quotes
-  if (neverUsed.length > 0) {
-    // Return random never-used quote
-    const randomIndex = Math.floor(Math.random() * neverUsed.length);
-    return neverUsed[randomIndex].id;
-  }
-
-  // All quotes have been used - select the one used longest ago
-  if (previouslyUsed.length > 0) {
-    previouslyUsed.sort((a, b) => {
-      const dateA = a.lastUsedDate!.getTime();
-      const dateB = b.lastUsedDate!.getTime();
-      return dateA - dateB; // Earliest date first
-    });
-    return previouslyUsed[0].id;
-  }
-
-  return null;
-}
 
 /**
  * Auto-schedule pairings for the next N days
@@ -183,70 +90,23 @@ export async function autoSchedulePairings(
         continue;
       }
 
-      // Select next best quote
-      const quoteId = await selectNextQuote(targetDate, usedQuoteIdsInBatch);
+      const scheduled = await schedulePairing(targetDate, usedQuoteIdsInBatch);
 
-      if (!quoteId) {
+      if (!scheduled) {
         console.warn(
-          `[auto-schedule] No suitable quote found for ${dateString} - skipping`
+          `[auto-schedule] No suitable quote (or date taken) for ${dateString} - skipping`
         );
         continue;
       }
 
-      // Check if this quote was never used before (for statistics)
-      const priorUsage = await prisma.pairing.findFirst({
-        where: { quoteId },
-        select: { id: true },
-      });
-
-      if (!priorUsage) {
-        neverUsedQuotes++;
-      } else {
+      if (scheduled.reused) {
         reusedQuotes++;
+      } else {
+        neverUsedQuotes++;
       }
-
-      // Fetch random Unsplash image
-      const unsplashPhoto = await getRandomLandscape();
-
-      // Create image record
-      const newImage = await prisma.image.create({
-        data: {
-          url: unsplashPhoto.url,
-          photographerName: unsplashPhoto.photographer,
-          photographerUrl: unsplashPhoto.photographerUrl,
-          source: 'Unsplash',
-          active: true,
-        },
-      });
-
       newImagesCreated++;
-
-      // Create pairing (with error handling for duplicate dates)
-      try {
-        await prisma.pairing.create({
-          data: {
-            quoteId,
-            imageId: newImage.id,
-            date: targetDate,
-          },
-        });
-
-        usedQuoteIdsInBatch.add(quoteId);
-        totalScheduled++;
-      } catch (error: any) {
-        // If unique constraint fails (date already exists), skip this date
-        if (error.code === 'P2002') {
-          console.log(
-            `[auto-schedule] Date ${dateString} already has a pairing - skipping`
-          );
-          // Clean up the unused image we just created
-          await prisma.image.delete({ where: { id: newImage.id } });
-          newImagesCreated--;
-          continue;
-        }
-        // Re-throw other errors
-        throw error;
-      }
+      usedQuoteIdsInBatch.add(scheduled.pairing.quoteId);
+      totalScheduled++;
     }
 
     // Revalidate affected pages
